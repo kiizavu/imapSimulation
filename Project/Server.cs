@@ -61,7 +61,7 @@ namespace Project
 
                     sendMess(text, client);
 
-                    listenerSocket.Close();
+                    //listenerSocket.Close();
                 }
             }
             catch
@@ -113,6 +113,7 @@ namespace Project
             btnListen.Enabled = false;
             CheckForIllegalCrossThreadCalls = false;
             Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
+            serverThread.IsBackground = false;
             serverThread.Start();
         }
     }
