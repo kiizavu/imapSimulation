@@ -140,5 +140,6 @@ namespace Project
             }
             richTextBox1.Text += s;
         }
+        int n;
     }
 }
