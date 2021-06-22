@@ -62,7 +62,7 @@ namespace Project
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-
+            int test;
             if (tbMess.Text != string.Empty)
             {
                 if (tbUserName.Text != string.Empty)
