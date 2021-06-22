@@ -115,5 +115,6 @@ namespace Project
             Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
             serverThread.Start();
         }
+        int n;
     }
 }
