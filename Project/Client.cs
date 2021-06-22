@@ -44,6 +44,7 @@ namespace Project
             {
                 while (true)
                 {
+                    int cc;
                     ns = tcpClient.GetStream();
                     var buffSize = tcpClient.ReceiveBufferSize;
                     byte[] data = new byte[buffSize];
