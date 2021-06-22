@@ -61,7 +61,7 @@ namespace Project
 
                     sendMess(text, client);
 
-                    //listenerSocket.Close();
+                    ///listenerSocket.Close();
                 }
             }
             catch
