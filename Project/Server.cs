@@ -86,15 +86,14 @@ namespace Project
         private void ListFolder(string temp)
         {
             switch (temp){
-                case "C: tag list '' '*'": //list all
-                     richTextBox1.Text += "S: *LIST  (|All |HasNoChildren) '/' '[Gmail]/All Mail'\n" +
-                        "S: *LIST  (|Drafts |HasNoChildren) '/' '[Gmail]/Drafts'\n" +
-                        "S: *LIST  (|HasNoChildren |Important) '/' '[Gmail]/Important'\n" +
-                        "S: *LIST  (|HasNoChildren |Sent) '/' '[Gmail]/Sent Mail'\n" +
-                        "S: *LIST  (|HasNoChildren |Junk) '/' '[Gmail]/Spam'\n" +
-                        "S: *LIST  (|Flagged |HasNoChildren) '/' '[Gmail]/Starred'\n" +
-                        "S: *LIST  (|HasNoChildren |Trash) '/' '[Gmail]/Trash'\n" +
-                        "S: *LIST  (|HasNoChildren) '/' 'tes'\nS: " +
+                case "list_all": //list all
+                     richTextBox1.Text += "S: *LIST  (|All) '/' '[Gmail]/All Mail'\n" +
+                        "S: *LIST  (|Drafts) '/' '[Gmail]/Drafts'\n" +
+                        "S: *LIST  (|Important) '/' '[Gmail]/Important'\n" +
+                        "S: *LIST  (|Sent) '/' '[Gmail]/Sent Mail'\n" +
+                        "S: *LIST  (|Junk) '/' '[Gmail]/Spam'\n" +
+                        "S: *LIST  (|Flagged) '/' '[Gmail]/Starred'\n" +
+                        "S: *LIST  (|Trash) '/' '[Gmail]/Trash'\nS: " +
                         StastusResponse(1) + "List Completed";
                     break;
             }
@@ -113,7 +112,7 @@ namespace Project
                 while (client.Connected)
                 {
                     sendMess("C: tag list '' '*'\n", client);
-                    ListFolder("C: tag list '' '*'");
+                    ListFolder("list_all");
                     string text = "";
                     do
                     {

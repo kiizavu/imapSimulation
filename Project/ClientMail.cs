@@ -39,7 +39,6 @@ namespace Project
         private void getMess()
         {
             string returnData;
-
             try
             {
                 while (true)
@@ -82,8 +81,6 @@ namespace Project
             string path = @"E:\Bài Tập\Visual Studio\ImapSimulation\INBOX";//tùy vào máy mỗi ng
             Fill(path);
             textBox1.Text = path;
-
-            SendMess(path);
         }
 
         //điền vào listview
@@ -107,40 +104,13 @@ namespace Project
                 listView1.Items.Add(lvi);
             }
         }
-        private string SendMess(string mess)
+        private string sendMess(string mess)
         {
             Byte[] data = Encoding.UTF8.GetBytes(mess);
             ns.Write(data, 0, data.Length);
             ns.Flush();
             richTextBox1.Text += mess;
             return mess;
-        }
-        //Bam vao hien file
-        private void listView1_ItemActivate(object sender, EventArgs e)
-        {
-            listView2.Items.Clear();
-            string path = @"E:/I";
-            string selected = listView1.SelectedItems[0].Text;
-            string mess = "tag select " + '"' + selected + '"';
-            SendMess(mess);
-            FileInfo[] fi = new FileInfo[100000];
-            DirectoryInfo di = new DirectoryInfo(path + selected);
-            fi = di.GetFiles();
-            try
-            {
-                for (int i = 0; i < fi.Length; i++)
-                {
-                    string uid = fi[i].Name;
-                    string date = File.ReadLines(path + selected + "/" + uid).Skip(0).Take(1).First();
-                    string from = File.ReadLines(path + selected + "/" + uid).Skip(1).Take(1).First();
-                    string sub = File.ReadLines(path + selected + "/" + uid).Skip(2).Take(1).First();
-                    listView2.Items.Add(uid);
-                    listView2.Items[i].SubItems.Add(from);
-                    listView2.Items[i].SubItems.Add(sub);
-                    listView2.Items[i].SubItems.Add(date);
-                }
-            }
-            catch { }
         }
     }
 }
