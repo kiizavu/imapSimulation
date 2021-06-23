@@ -58,7 +58,7 @@ namespace Project
                 tcpClient.Close();
             }
         }
-        private void ClienMail_Load(object sender, EventArgs e)
+        private void ClientMail_Load(object sender, EventArgs e)
         {
             //connect to server
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
