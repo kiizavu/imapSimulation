@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
 
 namespace Project
 {
@@ -37,7 +38,7 @@ namespace Project
             clientSocketList = new List<Socket>();
 
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            ipepServer = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8080);
+            ipepServer = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
             listenerSocket.Bind(ipepServer);
 
             Thread listen = new Thread(() =>
@@ -58,14 +59,14 @@ namespace Project
                 catch
                 {
                     listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    ipepServer = new IPEndPoint(IPAddress.Any, 8080);
+                    ipepServer = new IPEndPoint(IPAddress.Any, 1234);
                     listenerSocket.Bind(ipepServer);
                 }
 
             });
             listen.IsBackground = true;
             listen.Start();
-            richTextBox1.Text = "S: " + StastusResponse(1) + "IMAP4rev1 server ready.\n";
+            richTextBox1.Text = "S: " + "OK " + "IMAP4rev1 server ready.\n";
         }
 
         // Gui lai message cho client
@@ -73,28 +74,70 @@ namespace Project
         {
             foreach (Socket item in clientSocketList)
             {
-                if (item != null && item != client)
+                if (item != null && item == client)
                     item.Send(Encoding.UTF8.GetBytes(s));
             }
             richTextBox1.Text += s;
         }
 
+        string rootPath = @"E:/Inbox/";
+        string path = null;
         //phan hoi tu server
-        private string StastusResponse(int a)
+        private void StatusResponse(string mess, Socket client)
         {
-            switch(a){
-                case 1:
-                    return "* OK ";
-                case 2:
-                    return "* NO ";
-                case 3:
-                    return "* BAD";
-                case 4:
-                    return "* PREAUTH ";
-                default:
-                    return "* BYE ";
+            string[] subpath = { "All mail", "Draft", "Flagged", "Important", "Sent", "Starred", "Trash" };
+            if (mess.Contains("tag select"))
+            {
+                for(int i = 0; i < subpath.Length; i++)
+                {
+                    if (mess.Contains(subpath[i]))
+                    {
+                        path = rootPath + subpath[i];
+                        sendMess("OK\n", client);
+                        return;
+                    }
+                }
+                sendMess("Unknown mailbox\n", client);
+                return;
+            }
+            else if(!mess.Contains("tag select"))
+            {
+                return;
             }
         }
+
+        private void GetMailUID(string mess, Socket client)
+        {
+            if (mess.Contains("tag uid search all"))
+            {
+                FileInfo[] fi = new FileInfo[100000];
+                DirectoryInfo di = new DirectoryInfo(path);
+                fi = di.GetFiles();
+                try
+                {
+                    for (int i = 0; i < fi.Length; i++)
+                    {
+                        string returnData;
+                        string uid = fi[i].Name;
+                        string date = File.ReadLines(path + "/" + uid).Skip(0).Take(1).First();
+                        string from = File.ReadLines(path + "/" + uid).Skip(1).Take(1).First();
+                        string sub = File.ReadLines(path + "/" + uid).Skip(2).Take(1).First();
+                        returnData = uid + " " + date + " " + from + " " + sub;
+                        sendMess(returnData, client);
+                    }
+                }
+                catch { }
+                return;
+            }
+            else if(!mess.Contains("tag uid search all"))
+            {
+                return;
+            }
+            
+        }
+
+
+
         /*private string AutoRep(int a)//chua xong
         {
             int temp = Int32.Parse(a);
@@ -119,9 +162,10 @@ namespace Project
                 var endPoint = (IPEndPoint)client.RemoteEndPoint;
                 //sendMess(AutoRep(endPoint + "","1"), client);
                 sendMess("C: " + endPoint + " connected to the server.\n", client);
+                string text = "";
                 while (client.Connected)
                 {
-                    string text = "";
+                    
 
                     do
                     {
@@ -130,8 +174,9 @@ namespace Project
                     } while (text[text.Length - 1] != '\n');
 
                     richTextBox1.Text += endPoint + ": ";
+                    StatusResponse(text, client);
+                    GetMailUID(text, client);
 
-                    sendMess(text, client);
                 }
             }
             catch

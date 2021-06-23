@@ -32,7 +32,8 @@ namespace Project
             }
             else
             {
-                richTextBox1.Text += readData + "\n";
+                //richTextBox1.Text += readData + "\n";
+                //MessageBox.Show(readData);
             }
         }
 
@@ -62,7 +63,7 @@ namespace Project
         {
             //connect to server
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, 8080);
+            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, 1234);
             try
             {
                 tcpClient.Connect(iPEndPoint);
@@ -107,24 +108,30 @@ namespace Project
         }
         private string SendMess(string mess)
         {
-
             Byte[] data = Encoding.UTF8.GetBytes(mess);
             ns.Write(data, 0, data.Length);
             ns.Flush();
-            richTextBox1.Text += mess;
+            //richTextBox1.Text += mess;
             return mess;
         }
         //Bam vao hien file
-        private void listView1_ItemActivate(object sender, EventArgs e)
+        //Lay subpath
+        private void listView1_ItemActivate_1(object sender, EventArgs e)
         {
             listView2.Items.Clear();
-            string path = @"E:/Inbox/";
+            //string path = @"E:/Inbox/";
             string selected = listView1.SelectedItems[0].Text;
-            string mess = "tag select " + '"' + selected + '"';
+            string mess = "tag select " + '"' + selected + '"' + "\n";
             SendMess(mess);
-            FileInfo[] fi = new FileInfo[100000];
-            DirectoryInfo di = new DirectoryInfo(path + selected);
-            fi = di.GetFiles();
+            if(readData == "OK")
+            {
+                mess = "tag uid search all\n";
+                SendMess(mess);
+            }
+            MessageBox.Show(readData);
+            //FileInfo[] fi = new FileInfo[100000];
+            //DirectoryInfo di = new DirectoryInfo(path + selected);
+            /*fi = di.GetFiles();
             try
             {
                 for (int i = 0; i < fi.Length; i++)
@@ -139,7 +146,7 @@ namespace Project
                     listView2.Items[i].SubItems.Add(date);
                 }
             }
-            catch { }
+            catch { }*/
         }
     }
 }
