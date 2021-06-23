@@ -36,9 +36,9 @@ namespace Project
             // richTextBox1
             // 
             this.richTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBox1.Location = new System.Drawing.Point(17, 37);
+            this.richTextBox1.Location = new System.Drawing.Point(17, 54);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(771, 388);
+            this.richTextBox1.Size = new System.Drawing.Size(771, 371);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
