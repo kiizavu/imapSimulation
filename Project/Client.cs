@@ -84,7 +84,6 @@ namespace Project
 
         private void Client_Load(object sender, EventArgs e)
         {
-            int cc;
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
             IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, 8080);
             try

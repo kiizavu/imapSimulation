@@ -58,7 +58,7 @@ namespace Project
                 tcpClient.Close();
             }
         }
-        private void ClienMail_Load(object sender, EventArgs e)
+        private void ClientMail_Load(object sender, EventArgs e)
         {
             //connect to server
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
@@ -79,9 +79,11 @@ namespace Project
 
             //lấy ổ đĩa
             DriveInfo[] drives = DriveInfo.GetDrives();
-            string path = @"E:\Inbox\";//tùy vào máy mỗi ng
+            string path = @"E:\Bài Tập\Visual Studio\ImapSimulation\INBOX";//tùy vào máy mỗi ng
             Fill(path);
             textBox1.Text = path;
+
+            SendMess(path);
         }
 
         //điền vào listview
@@ -107,7 +109,6 @@ namespace Project
         }
         private string SendMess(string mess)
         {
-
             Byte[] data = Encoding.UTF8.GetBytes(mess);
             ns.Write(data, 0, data.Length);
             ns.Flush();
@@ -118,7 +119,7 @@ namespace Project
         private void listView1_ItemActivate(object sender, EventArgs e)
         {
             listView2.Items.Clear();
-            string path = @"E:/Inbox/";
+            string path = @"E:/I";
             string selected = listView1.SelectedItems[0].Text;
             string mess = "tag select " + '"' + selected + '"';
             SendMess(mess);

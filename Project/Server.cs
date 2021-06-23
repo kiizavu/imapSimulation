@@ -29,13 +29,12 @@ namespace Project
         {
             CheckForIllegalCrossThreadCalls = false;
             Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
-            serverThread.IsBackground = false;
+            serverThread.IsBackground = true;
             serverThread.Start();
         }
         void StartUnsafeThread()
         {
             clientSocketList = new List<Socket>();
-
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             ipepServer = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8080);
             listenerSocket.Bind(ipepServer);
@@ -68,17 +67,6 @@ namespace Project
             richTextBox1.Text = "S: " + StastusResponse(1) + "IMAP4rev1 server ready.\n";
         }
 
-        // Gui lai message cho client
-        void sendMess(string s, Socket client)
-        {
-            foreach (Socket item in clientSocketList)
-            {
-                if (item != null && item != client)
-                    item.Send(Encoding.UTF8.GetBytes(s));
-            }
-            richTextBox1.Text += s;
-        }
-
         //phan hoi tu server
         private string StastusResponse(int a)
         {
@@ -95,18 +83,22 @@ namespace Project
                     return "* BYE ";
             }
         }
-        /*private string AutoRep(int a)//chua xong
+        private void ListFolder(string temp)
         {
-            int temp = Int32.Parse(a);
-            switch(temp){
-                case 1:
-                    return "Client Connected";
-                    break;
-                case 2:
+            switch (temp){
+                case "C: tag list '' '*'": //list all
+                     richTextBox1.Text += "S: *LIST  (|All |HasNoChildren) '/' '[Gmail]/All Mail'\n" +
+                        "S: *LIST  (|Drafts |HasNoChildren) '/' '[Gmail]/Drafts'\n" +
+                        "S: *LIST  (|HasNoChildren |Important) '/' '[Gmail]/Important'\n" +
+                        "S: *LIST  (|HasNoChildren |Sent) '/' '[Gmail]/Sent Mail'\n" +
+                        "S: *LIST  (|HasNoChildren |Junk) '/' '[Gmail]/Spam'\n" +
+                        "S: *LIST  (|Flagged |HasNoChildren) '/' '[Gmail]/Starred'\n" +
+                        "S: *LIST  (|HasNoChildren |Trash) '/' '[Gmail]/Trash'\n" +
+                        "S: *LIST  (|HasNoChildren) '/' 'tes'\nS: " +
+                        StastusResponse(1) + "List Completed";
                     break;
             }
-            return rev;
-        }*/
+        }
         // Nhan message tu client
         void getMess(object obj)
         {
@@ -117,12 +109,12 @@ namespace Project
                 byte[] recv = new byte[1];
 
                 var endPoint = (IPEndPoint)client.RemoteEndPoint;
-                //sendMess(AutoRep(endPoint + "","1"), client);
-                sendMess("C: " + endPoint + " connected to the server.\n", client);
+                sendMess("S: " + endPoint + " connected to the server.\n", client);
                 while (client.Connected)
                 {
+                    sendMess("C: tag list '' '*'\n", client);
+                    ListFolder("C: tag list '' '*'");
                     string text = "";
-
                     do
                     {
                         bytesReceived = client.Receive(recv);
@@ -130,7 +122,6 @@ namespace Project
                     } while (text[text.Length - 1] != '\n');
 
                     richTextBox1.Text += endPoint + ": ";
-
                     sendMess(text, client);
                 }
             }
@@ -139,7 +130,16 @@ namespace Project
                 clientSocketList.Remove(client);
                 client.Close();
             }
-
+        }
+        // Gui lai message cho client
+        void sendMess(string s, Socket client)
+        {
+            foreach (Socket item in clientSocketList)
+            {
+                if (item != null && item != client)
+                    item.Send(Encoding.UTF8.GetBytes(s));
+            }
+            richTextBox1.Text += s;
         }
     }
 }
