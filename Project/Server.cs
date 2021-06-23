@@ -24,54 +24,14 @@ namespace Project
             InitializeComponent();
         }
 
-        // Gui lai message cho client
-        void sendMess(string s, Socket client)
+        //mở form là listen luôn
+        private void Server_Load(object sender, EventArgs e)
         {
-            foreach (Socket item in clientSocketList)
-            {
-                if (item != null && item != client)
-                    item.Send(Encoding.UTF8.GetBytes(s));
-            }
-
-            richTextBox1.Text += s;
+            CheckForIllegalCrossThreadCalls = false;
+            Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
+            serverThread.IsBackground = false;
+            serverThread.Start();
         }
-
-        // Nhan message tu client
-        void getMess(object obj)
-        {
-            Socket client = obj as Socket;
-            try
-            {
-                int bytesReceived = 0;
-                byte[] recv = new byte[1];
-
-                var endPoint = (IPEndPoint)client.RemoteEndPoint;
-                sendMess(endPoint + " joined the server.\n", client);
-                while (client.Connected)
-                {
-                    string text = "";
-
-                    do
-                    {
-                        bytesReceived = client.Receive(recv);
-                        text += Encoding.UTF8.GetString(recv);
-                    } while (text[text.Length - 1] != '\n');
-
-                    richTextBox1.Text += endPoint + ": ";
-
-                    sendMess(text, client);
-
-                    //listenerSocket.Close();
-                }
-            }
-            catch
-            {
-                clientSocketList.Remove(client);
-                client.Close();
-            }
-
-        }
-
         void StartUnsafeThread()
         {
             clientSocketList = new List<Socket>();
@@ -105,16 +65,81 @@ namespace Project
             });
             listen.IsBackground = true;
             listen.Start();
-            richTextBox1.Text += "Waiting for client......\n";
+            richTextBox1.Text = "S: " + StastusResponse(1) + "IMAP4rev1 server ready.\n";
         }
 
-        private void btnListen_Click(object sender, EventArgs e)
+        // Gui lai message cho client
+        void sendMess(string s, Socket client)
         {
-            btnListen.Enabled = false;
-            CheckForIllegalCrossThreadCalls = false;
-            Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
-            serverThread.IsBackground = false;
-            serverThread.Start();
+            foreach (Socket item in clientSocketList)
+            {
+                if (item != null && item != client)
+                    item.Send(Encoding.UTF8.GetBytes(s));
+            }
+            richTextBox1.Text += s;
+        }
+
+        //phan hoi tu server
+        private string StastusResponse(int a)
+        {
+            switch(a){
+                case 1:
+                    return "* OK ";
+                case 2:
+                    return "* NO ";
+                case 3:
+                    return "* BAD";
+                case 4:
+                    return "* PREAUTH ";
+                default:
+                    return "* BYE ";
+            }
+        }
+        /*private string AutoRep(int a)//chua xong
+        {
+            int temp = Int32.Parse(a);
+            switch(temp){
+                case 1:
+                    return "Client Connected";
+                    break;
+                case 2:
+                    break;
+            }
+            return rev;
+        }*/
+        // Nhan message tu client
+        void getMess(object obj)
+        {
+            Socket client = obj as Socket;
+            try
+            {
+                int bytesReceived = 0;
+                byte[] recv = new byte[1];
+
+                var endPoint = (IPEndPoint)client.RemoteEndPoint;
+                //sendMess(AutoRep(endPoint + "","1"), client);
+                sendMess("C: " + endPoint + " connected to the server.\n", client);
+                while (client.Connected)
+                {
+                    string text = "";
+
+                    do
+                    {
+                        bytesReceived = client.Receive(recv);
+                        text += Encoding.UTF8.GetString(recv);
+                    } while (text[text.Length - 1] != '\n');
+
+                    richTextBox1.Text += endPoint + ": ";
+
+                    sendMess(text, client);
+                }
+            }
+            catch
+            {
+                clientSocketList.Remove(client);
+                client.Close();
+            }
+
         }
     }
 }
