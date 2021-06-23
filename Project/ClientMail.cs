@@ -17,13 +17,48 @@ namespace Project
     public partial class ClientMail : Form
     {
         TcpClient tcpClient = new TcpClient();
+        NetworkStream ns = default(NetworkStream);
+        string readData = null;
         public ClientMail()
         {
             InitializeComponent();
         }
 
-        static string path = "";
-        private void ClientMail_Load(object sender, EventArgs e)
+        private void msg()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new MethodInvoker(msg));
+            }
+            else
+            {
+                richTextBox1.Text += readData + "\n";
+            }
+        }
+
+        private void getMess()
+        {
+            string returnData;
+
+            try
+            {
+                while (true)
+                {
+                    ns = tcpClient.GetStream();
+                    var buffSize = tcpClient.ReceiveBufferSize;
+                    byte[] data = new byte[buffSize];
+                    ns.Read(data, 0, buffSize);
+                    returnData = Encoding.UTF8.GetString(data);
+                    readData = returnData;
+                    msg();
+                }
+            }
+            catch
+            {
+                tcpClient.Close();
+            }
+        }
+        private void ClienMail_Load(object sender, EventArgs e)
         {
             //connect to server
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
@@ -38,10 +73,13 @@ namespace Project
                 this.Close();
                 return;
             }
+            Thread thread = new Thread(getMess);
+            thread.IsBackground = false;
+            thread.Start();
 
             //lấy ổ đĩa
             DriveInfo[] drives = DriveInfo.GetDrives();
-            path = @"E:\Bài Tập\Visual Studio\ImapSimulation\INBOX\";//tùy vào máy mỗi ng
+            string path = @"E:\Inbox\";//tùy vào máy mỗi ng
             Fill(path);
             textBox1.Text = path;
         }
@@ -66,6 +104,42 @@ namespace Project
                 ListViewItem lvi = new ListViewItem(fi.Name);
                 listView1.Items.Add(lvi);
             }
+        }
+        private string SendMess(string mess)
+        {
+
+            Byte[] data = Encoding.UTF8.GetBytes(mess);
+            ns.Write(data, 0, data.Length);
+            ns.Flush();
+            richTextBox1.Text += mess;
+            return mess;
+        }
+        //Bam vao hien file
+        private void listView1_ItemActivate(object sender, EventArgs e)
+        {
+            listView2.Items.Clear();
+            string path = @"E:/Inbox/";
+            string selected = listView1.SelectedItems[0].Text;
+            string mess = "tag select " + '"' + selected + '"';
+            SendMess(mess);
+            FileInfo[] fi = new FileInfo[100000];
+            DirectoryInfo di = new DirectoryInfo(path + selected);
+            fi = di.GetFiles();
+            try
+            {
+                for (int i = 0; i < fi.Length; i++)
+                {
+                    string uid = fi[i].Name;
+                    string date = File.ReadLines(path + selected + "/" + uid).Skip(0).Take(1).First();
+                    string from = File.ReadLines(path + selected + "/" + uid).Skip(1).Take(1).First();
+                    string sub = File.ReadLines(path + selected + "/" + uid).Skip(2).Take(1).First();
+                    listView2.Items.Add(uid);
+                    listView2.Items[i].SubItems.Add(from);
+                    listView2.Items[i].SubItems.Add(sub);
+                    listView2.Items[i].SubItems.Add(date);
+                }
+            }
+            catch { }
         }
     }
 }
