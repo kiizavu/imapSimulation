@@ -35,11 +35,11 @@ namespace Project
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.listView2 = new System.Windows.Forms.ListView();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // listView1
@@ -92,32 +92,42 @@ namespace Project
             this.columnHeader5});
             this.listView2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listView2.HideSelection = false;
-            this.listView2.Location = new System.Drawing.Point(158, 68);
+            this.listView2.Location = new System.Drawing.Point(155, 75);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(535, 455);
+            this.listView2.Size = new System.Drawing.Size(564, 448);
             this.listView2.TabIndex = 5;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
             // 
-            // richTextBox1
+            // columnHeader1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(758, 68);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(188, 453);
-            this.richTextBox1.TabIndex = 6;
-            this.richTextBox1.Text = "";
+            this.columnHeader1.Text = "";
+            this.columnHeader1.Width = 81;
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Width = 90;
+            this.columnHeader3.Text = "";
+            this.columnHeader3.Width = 105;
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Width = 101;
+            this.columnHeader4.Text = "";
+            this.columnHeader4.Width = 131;
             // 
             // columnHeader5
             // 
+            this.columnHeader5.Text = "";
             this.columnHeader5.Width = 289;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.BackColor = System.Drawing.Color.Black;
+            this.richTextBox1.ForeColor = System.Drawing.Color.White;
+            this.richTextBox1.Location = new System.Drawing.Point(749, 77);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(219, 446);
+            this.richTextBox1.TabIndex = 6;
+            this.richTextBox1.Text = "";
             // 
             // ClientMail
             // 
