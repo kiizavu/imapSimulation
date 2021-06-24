@@ -174,7 +174,7 @@ namespace Project
                         string date = File.ReadLines(path + "/" + item).Skip(0).Take(1).First();
                         string from = File.ReadLines(path + "/" + item).Skip(1).Take(1).First();
                         string sub = File.ReadLines(path + "/" + item).Skip(2).Take(1).First();
-                        string returnData = item + "-" + from + "-" + sub + "-" + date;
+                        string returnData = item + "-" + from + "-" + sub + "-" + date +'\n';
                         sendMess(returnData, client);
                     }
                     
