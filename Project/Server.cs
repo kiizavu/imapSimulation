@@ -16,6 +16,7 @@ namespace Project
 {
     public partial class Server : Form
     {
+        char[] delimiterChars = { ' ', '-', '\n' };
         List<Socket> clientSocketList;
         Socket listenerSocket;
         IPEndPoint ipepServer;
@@ -80,7 +81,7 @@ namespace Project
             richTextBox1.Text += s;
         }
 
-        string rootPath = @"E:/Inbox/";
+        string rootPath = Path.GetDirectoryName(Application.ExecutablePath) + @"/Inbox/";
         string path = null;
         //phan hoi tu server
         private void StatusResponse(string mess, Socket client)
@@ -93,7 +94,7 @@ namespace Project
                     if (mess.Contains(subpath[i]))
                     {
                         path = rootPath + subpath[i];
-                        sendMess("OK\n", client);
+                        sendMess($"tag OK [READ-WRITE] {subpath[i]} selected. (Success)\n", client);
                         return;
                     }
                 }
@@ -115,16 +116,17 @@ namespace Project
                 fi = di.GetFiles();
                 try
                 {
+                    string returnData = "* SEARCH ";
                     for (int i = 0; i < fi.Length; i++)
                     {
-                        string returnData;
                         string uid = fi[i].Name;
-                        string date = File.ReadLines(path + "/" + uid).Skip(0).Take(1).First();
+/*                        string date = File.ReadLines(path + "/" + uid).Skip(0).Take(1).First();
                         string from = File.ReadLines(path + "/" + uid).Skip(1).Take(1).First();
-                        string sub = File.ReadLines(path + "/" + uid).Skip(2).Take(1).First();
-                        returnData = uid + " " + date + " " + from + " " + sub;
-                        sendMess(returnData, client);
+                        string sub = File.ReadLines(path + "/" + uid).Skip(2).Take(1).First();*/
+                        returnData += uid + " ";
                     }
+                    returnData += "\ntag OK SEARCH completed (Success)";
+                    sendMess(returnData, client);
                 }
                 catch { }
                 return;
@@ -134,6 +136,35 @@ namespace Project
                 return;
             }
             
+        }
+
+
+        private void FetchUID(string mess, Socket client)
+        {
+            if (mess.Contains("tag uid fetch"))
+            {
+                try
+                {
+                    mess = mess.Substring(14);
+                    string[] uids = mess.Split(delimiterChars);
+                    foreach (var item in uids)
+                    {
+                        string date = File.ReadLines(path + "/" + item).Skip(0).Take(1).First();
+                        string from = File.ReadLines(path + "/" + item).Skip(1).Take(1).First();
+                        string sub = File.ReadLines(path + "/" + item).Skip(2).Take(1).First();
+                        string returnData = item + "-" + from + "-" + sub + "-" + date;
+                        sendMess(returnData, client);
+                    }
+                    
+                }
+                catch { }
+                return;
+            }
+            else if (!mess.Contains("tag uid fetch"))
+            {
+                return;
+            }
+
         }
 
 
@@ -162,20 +193,19 @@ namespace Project
                 var endPoint = (IPEndPoint)client.RemoteEndPoint;
                 //sendMess(AutoRep(endPoint + "","1"), client);
                 sendMess("C: " + endPoint + " connected to the server.\n", client);
-                string text = "";
                 while (client.Connected)
                 {
-                    
-
+                    string text = "";
                     do
                     {
                         bytesReceived = client.Receive(recv);
                         text += Encoding.UTF8.GetString(recv);
                     } while (text[text.Length - 1] != '\n');
 
-                    richTextBox1.Text += endPoint + ": ";
+                    richTextBox1.Text += endPoint + ": " + text;
                     StatusResponse(text, client);
                     GetMailUID(text, client);
+                    FetchUID(text, client);
 
                 }
             }
