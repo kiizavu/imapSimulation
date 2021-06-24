@@ -90,6 +90,9 @@ namespace Project
             }
         }
 
+        //Date: odsahfiouasdhf
+        //Subject: soldahnflaisjdhf
+        
         private void getMess()
         {
             string returnData;
@@ -156,6 +159,14 @@ namespace Project
             listView2.Items.Clear();
             selectedFolder = listView1.SelectedItems[0].Text;
             string mess = "tag select " + "'" + selectedFolder + "'" + "\n";
+            SendMess(mess);
+        }
+
+        private void listView2_ItemActivate(object sender, EventArgs e)
+        {
+            ismailselected = 1;
+            string mailselected = listView2.SelectedItems[0].Text;
+            string mess = "tag uid fetch " + mailselected + '\n';
             SendMess(mess);
         }
 
