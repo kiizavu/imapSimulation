@@ -21,7 +21,7 @@ namespace Project
         char[] delimiterChars = { ' ', '-', '\n' };
         string readData = null;
         string selected;
-        int numberOfMail = 0;
+        int numberOfMail = 0, ismailselected = 0;
         public ClientMail()
         {
             InitializeComponent();
@@ -55,7 +55,7 @@ namespace Project
                     }
                     SendMess(mess + "\n");
                 }
-                else if (readData.Contains("-"))
+                else if (readData.Contains("-") && ismailselected == 0)
                 {
                     string[] words = readData.Split('-');
                     listView2.Items.Add(words[0]);
@@ -65,9 +65,22 @@ namespace Project
                     }
                     numberOfMail++;
                 }
+                else if(readData.Contains("-") && ismailselected == 1)
+                {
+                    richTextBox1.Text = "";
+                    string[] s = readData.Split('-');
+                    string from = s[1];
+                    string subject = s[2];
+                    string date = s[3];
+                    richTextBox1.Text += from + '\n' + subject + '\n' + date + '\n';
+                    ismailselected = 0;
+                }
             }
         }
 
+        //Date: odsahfiouasdhf
+        //Subject: soldahnflaisjdhf
+        
         private void getMess()
         {
             string returnData;
@@ -151,6 +164,14 @@ namespace Project
             listView2.Items.Clear();
             selected = listView1.SelectedItems[0].Text;
             string mess = "tag select " + '"' + selected + '"' + "\n";
+            SendMess(mess);
+        }
+
+        private void listView2_ItemActivate(object sender, EventArgs e)
+        {
+            ismailselected = 1;
+            string mailselected = listView2.SelectedItems[0].Text;
+            string mess = "tag uid fetch " + mailselected + '\n';
             SendMess(mess);
         }
     }
