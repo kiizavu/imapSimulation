@@ -22,8 +22,9 @@ namespace Project
         NetworkStream ns = default(NetworkStream);
         char[] delimiterChars = { ' ', '-', '\n' };
         string readData = null;
-        string selected;
+        string selectedFolder;
         int numberOfMail = 0;
+        int ismailselected = 0;
         public ClientMail()
         {
             InitializeComponent();
@@ -43,7 +44,7 @@ namespace Project
                     string[] folder = readData.Split('\n');
                     listView1.Items.Add(folder[0]);
                 }
-                else if (readData.Contains($"tag OK [READ-WRITE] {selected} selected. (Success)"))
+                else if (readData.Contains($"tag OK [READ-WRITE] {selectedFolder} selected. (Success)"))
                 {
                     numberOfMail = 0;
                     string mess = "tag uid search all\n";
@@ -66,7 +67,7 @@ namespace Project
                         SendMess(mess + "\n");
                     }
                 }
-                else if (readData.Contains("-"))
+                else if (readData.Contains("-") && ismailselected == 0)
                 {
                     string[] words = readData.Split('-');
                     listView2.Items.Add(words[0]);
@@ -75,6 +76,16 @@ namespace Project
                         listView2.Items[numberOfMail].SubItems.Add(words[i]);
                     }
                     numberOfMail++;
+                }
+                else if (readData.Contains("-") && ismailselected == 1)
+                {
+                    richTextBox1.Text = "";
+                    string[] s = readData.Split('-');
+                    string from = s[1];
+                    string subject = s[2];
+                    string date = s[3];
+                    richTextBox1.Text += from + '\n' + subject + '\n' + date + '\n';
+                    ismailselected = 0;
                 }
             }
         }
@@ -125,6 +136,10 @@ namespace Project
             listView1.Items.Clear();
             string mess = "tag list" + "\n";
             SendMess(mess);
+
+            selectedFolder = "All mail";
+            mess = "tag select " + "'" + selectedFolder + "'" + "\n";
+            SendMess(mess);
         }
 
         private string SendMess(string mess)
@@ -136,11 +151,19 @@ namespace Project
         }
         //Bam vao hien file
         //Lay subpath
-        private void listView1_ItemActivate_1(object sender, EventArgs e)
+        private void listView1_ItemActivate(object sender, EventArgs e)
         {
             listView2.Items.Clear();
-            selected = listView1.SelectedItems[0].Text;
-            string mess = "tag select " + "'" + selected + "'" + "\n";
+            selectedFolder = listView1.SelectedItems[0].Text;
+            string mess = "tag select " + "'" + selectedFolder + "'" + "\n";
+            SendMess(mess);
+        }
+
+        private void listView2_ItemActivate(object sender, EventArgs e)
+        {
+            ismailselected = 1;
+            string mailselected = listView2.SelectedItems[0].Text;
+            string mess = "tag uid fetch " + mailselected + '\n';
             SendMess(mess);
         }
     }
