@@ -108,7 +108,6 @@ namespace Project
         }
 
 
-
         //phan hoi tu server
         private void StatusResponse(string mess, Socket client)
         {
