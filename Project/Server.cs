@@ -125,7 +125,7 @@ namespace Project
                         string sub = File.ReadLines(path + "/" + uid).Skip(2).Take(1).First();*/
                         returnData += uid + " ";
                     }
-                    returnData += "\ntag OK SEARCH completed (Success)";
+                    returnData += "\ntag OK SEARCH completed (Success)\n";
                     sendMess(returnData, client);
                 }
                 catch { }
@@ -152,7 +152,7 @@ namespace Project
                         string date = File.ReadLines(path + "/" + item).Skip(0).Take(1).First();
                         string from = File.ReadLines(path + "/" + item).Skip(1).Take(1).First();
                         string sub = File.ReadLines(path + "/" + item).Skip(2).Take(1).First();
-                        string returnData = item + "-" + from + "-" + sub + "-" + date;
+                        string returnData = item + "-" + from + "-" + sub + "-" + date +'\n';
                         sendMess(returnData, client);
                     }
                     
@@ -202,7 +202,7 @@ namespace Project
                         text += Encoding.UTF8.GetString(recv);
                     } while (text[text.Length - 1] != '\n');
 
-                    richTextBox1.Text += endPoint + ": " + text;
+                    richTextBox1.Text += "C: "+ endPoint + ": " + text;
                     StatusResponse(text, client);
                     GetMailUID(text, client);
                     FetchUID(text, client);

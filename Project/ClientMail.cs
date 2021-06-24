@@ -119,7 +119,7 @@ namespace Project
                 return;
             }
             Thread thread = new Thread(getMess);
-            thread.IsBackground = false;
+            thread.IsBackground = true;
             thread.Start();
 
             //lấy ổ đĩa
