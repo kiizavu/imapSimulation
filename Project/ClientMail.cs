@@ -24,6 +24,7 @@ namespace Project
             InitializeComponent();
         }
 
+        const string path = @"E:\Bài Tập\Visual Studio\ImapSimulation\INBOX";//tùy vào máy mỗi ng
         private void msg()
         {
             if (this.InvokeRequired)
@@ -78,7 +79,6 @@ namespace Project
 
             //lấy ổ đĩa
             DriveInfo[] drives = DriveInfo.GetDrives();
-            string path = @"E:\Bài Tập\Visual Studio\ImapSimulation\INBOX";//tùy vào máy mỗi ng
             Fill(path);
             textBox1.Text = path;
         }

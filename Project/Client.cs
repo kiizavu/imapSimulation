@@ -39,7 +39,6 @@ namespace Project
         private void getMess()
         {
             string returnData;
-
             try
             {
                 while (true)

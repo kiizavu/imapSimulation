@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
 
 namespace Project
 {
@@ -23,6 +24,8 @@ namespace Project
         {
             InitializeComponent();
         }
+
+        const string path = @"E:\Bài Tập\Visual Studio\ImapSimulation\INBOX";//tùy vào máy mỗi ng
 
         //mở form là listen luôn
         private void Server_Load(object sender, EventArgs e)
@@ -85,17 +88,24 @@ namespace Project
         }
         private void ListFolder(string temp)
         {
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            DirectoryInfo DI = new DirectoryInfo(@path);
+            DirectoryInfo[] directories = DI.GetDirectories();
             switch (temp){
-                case "list_all": //list all
-                     richTextBox1.Text += "S: *LIST  (|All) '/' '[Gmail]/All Mail'\n" +
+                case "All": //list all
+                    foreach (DirectoryInfo di in directories)                                               
+                    {
+                        richTextBox1.Text +="S: *LIST (|" + temp +") '/' '[Gmail]/" + di.Name + "'\n";
+                    }
+                    richTextBox1.Text += "S: " + StastusResponse(1) + "List Completed";
+                    break;
+                    /*"S: *LIST  (|All) '/' '[Gmail]/All Mail'\n" +
                         "S: *LIST  (|Drafts) '/' '[Gmail]/Drafts'\n" +
                         "S: *LIST  (|Important) '/' '[Gmail]/Important'\n" +
                         "S: *LIST  (|Sent) '/' '[Gmail]/Sent Mail'\n" +
                         "S: *LIST  (|Junk) '/' '[Gmail]/Spam'\n" +
                         "S: *LIST  (|Flagged) '/' '[Gmail]/Starred'\n" +
-                        "S: *LIST  (|Trash) '/' '[Gmail]/Trash'\nS: " +
-                        StastusResponse(1) + "List Completed";
-                    break;
+                        "S: *LIST  (|Trash) '/' '[Gmail]/Trash'\nS: " +*/
             }
         }
         // Nhan message tu client
@@ -112,7 +122,7 @@ namespace Project
                 while (client.Connected)
                 {
                     sendMess("C: tag list '' '*'\n", client);
-                    ListFolder("list_all");
+                    ListFolder("All");
                     string text = "";
                     do
                     {
