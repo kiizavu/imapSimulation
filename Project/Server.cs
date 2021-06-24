@@ -94,6 +94,7 @@ namespace Project
                     {
                         path = rootPath + subpath[i];
                         sendMess("OK\n", client);
+                        sendMess(path + '\n', client);
                         return;
                     }
                 }
@@ -135,7 +136,7 @@ namespace Project
             }
             
         }
-
+        //
 
 
         /*private string AutoRep(int a)//chua xong
@@ -161,22 +162,22 @@ namespace Project
 
                 var endPoint = (IPEndPoint)client.RemoteEndPoint;
                 //sendMess(AutoRep(endPoint + "","1"), client);
-                sendMess("C: " + endPoint + " connected to the server.\n", client);
+                //sendMess("C: " + endPoint + " connected to the server.\n", client);
                 string text = "";
                 while (client.Connected)
                 {
-                    
 
+                    text = "";
                     do
                     {
                         bytesReceived = client.Receive(recv);
                         text += Encoding.UTF8.GetString(recv);
+                        StatusResponse(text, client);
+                        //GetMailUID(text, client);
                     } while (text[text.Length - 1] != '\n');
 
                     richTextBox1.Text += endPoint + ": ";
-                    StatusResponse(text, client);
-                    GetMailUID(text, client);
-
+                    
                 }
             }
             catch
