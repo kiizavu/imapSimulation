@@ -16,6 +16,8 @@ namespace Project
 {
     public partial class ClientMail : Form
     {
+        const string IPADDRESS = "127.0.0.1";
+        const int PORT = 8080;
         TcpClient tcpClient = new TcpClient();
         NetworkStream ns = default(NetworkStream);
         char[] delimiterChars = { ' ', '-', '\n' };
@@ -37,6 +39,7 @@ namespace Project
             {
                 if (readData.Contains($"tag OK [READ-WRITE] {selected} selected. (Success)"))
                 {
+                    numberOfMail = 0;
                     string mess = "tag uid search all\n";
                     SendMess(mess);
                 }
@@ -92,8 +95,8 @@ namespace Project
         private void ClientMail_Load(object sender, EventArgs e)
         {
             //connect to server
-            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, 1234);
+            IPAddress ipAddress = IPAddress.Parse(IPADDRESS);
+            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, PORT);
             try
             {
                 tcpClient.Connect(iPEndPoint);

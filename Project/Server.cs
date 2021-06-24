@@ -16,6 +16,8 @@ namespace Project
 {
     public partial class Server : Form
     {
+        const string IPADDRESS = "127.0.0.1";
+        const int PORT = 8080;
         char[] delimiterChars = { ' ', '-', '\n' };
         List<Socket> clientSocketList;
         Socket listenerSocket;
@@ -39,7 +41,7 @@ namespace Project
             clientSocketList = new List<Socket>();
 
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            ipepServer = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
+            ipepServer = new IPEndPoint(IPAddress.Parse(IPADDRESS), PORT);
             listenerSocket.Bind(ipepServer);
 
             Thread listen = new Thread(() =>
@@ -120,9 +122,6 @@ namespace Project
                     for (int i = 0; i < fi.Length; i++)
                     {
                         string uid = fi[i].Name;
-/*                        string date = File.ReadLines(path + "/" + uid).Skip(0).Take(1).First();
-                        string from = File.ReadLines(path + "/" + uid).Skip(1).Take(1).First();
-                        string sub = File.ReadLines(path + "/" + uid).Skip(2).Take(1).First();*/
                         returnData += uid + " ";
                     }
                     returnData += "\ntag OK SEARCH completed (Success)";
