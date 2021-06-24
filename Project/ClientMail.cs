@@ -18,7 +18,10 @@ namespace Project
     {
         TcpClient tcpClient = new TcpClient();
         NetworkStream ns = default(NetworkStream);
+        char[] delimiterChars = { ' ', '-', '\n' };
         string readData = null;
+        string selected;
+        int numberOfMail = 0;
         public ClientMail()
         {
             InitializeComponent();
@@ -32,8 +35,35 @@ namespace Project
             }
             else
             {
-                //richTextBox1.Text += readData + "\n";
-                //MessageBox.Show(readData);
+                if (readData.Contains($"tag OK [READ-WRITE] {selected} selected. (Success)"))
+                {
+                    string mess = "tag uid search all\n";
+                    SendMess(mess);
+                }
+                else if (readData.Contains("* SEARCH"))
+                {
+                    int index = readData.IndexOf("\ntag OK SEARCH completed (Success)");
+                    string uids = readData.Substring(9, index);
+                    index = uids.IndexOf("\ntag");
+                    uids = uids.Substring(0, index - 1);
+                    string[] words = uids.Split(delimiterChars);
+                    string mess = "tag uid fetch ";
+                    foreach (var item in words)
+                    {
+                        mess += item + " ";
+                    }
+                    SendMess(mess + "\n");
+                }
+                else if (readData.Contains("-"))
+                {
+                    string[] words = readData.Split('-');
+                    listView2.Items.Add(words[0]);
+                    for (int i = 1; i < words.Length; i++)
+                    {
+                        listView2.Items[numberOfMail].SubItems.Add(words[i]);
+                    }
+                    numberOfMail++;
+                }
             }
         }
 
@@ -80,7 +110,7 @@ namespace Project
 
             //lấy ổ đĩa
             DriveInfo[] drives = DriveInfo.GetDrives();
-            string path = @"E:\Inbox\";//tùy vào máy mỗi ng
+            string path = Path.GetDirectoryName(Application.ExecutablePath) + "\\Inbox";//tùy vào máy mỗi ng
             Fill(path);
             textBox1.Text = path;
         }
@@ -111,7 +141,6 @@ namespace Project
             Byte[] data = Encoding.UTF8.GetBytes(mess);
             ns.Write(data, 0, data.Length);
             ns.Flush();
-            //richTextBox1.Text += mess;
             return mess;
         }
         //Bam vao hien file
@@ -119,34 +148,9 @@ namespace Project
         private void listView1_ItemActivate_1(object sender, EventArgs e)
         {
             listView2.Items.Clear();
-            //string path = @"E:/Inbox/";
-            string selected = listView1.SelectedItems[0].Text;
+            selected = listView1.SelectedItems[0].Text;
             string mess = "tag select " + '"' + selected + '"' + "\n";
             SendMess(mess);
-            if(readData == "OK")
-            {
-                mess = "tag uid search all\n";
-                SendMess(mess);
-            }
-            MessageBox.Show(readData);
-            //FileInfo[] fi = new FileInfo[100000];
-            //DirectoryInfo di = new DirectoryInfo(path + selected);
-            /*fi = di.GetFiles();
-            try
-            {
-                for (int i = 0; i < fi.Length; i++)
-                {
-                    string uid = fi[i].Name;
-                    string date = File.ReadLines(path + selected + "/" + uid).Skip(0).Take(1).First();
-                    string from = File.ReadLines(path + selected + "/" + uid).Skip(1).Take(1).First();
-                    string sub = File.ReadLines(path + selected + "/" + uid).Skip(2).Take(1).First();
-                    listView2.Items.Add(uid);
-                    listView2.Items[i].SubItems.Add(from);
-                    listView2.Items[i].SubItems.Add(sub);
-                    listView2.Items[i].SubItems.Add(date);
-                }
-            }
-            catch { }*/
         }
     }
 }

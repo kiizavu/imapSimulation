@@ -46,9 +46,10 @@ namespace Project
             this.listView1.BackColor = System.Drawing.SystemColors.Window;
             this.listView1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(12, 68);
+            this.listView1.Location = new System.Drawing.Point(9, 55);
+            this.listView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(114, 455);
+            this.listView1.Size = new System.Drawing.Size(86, 370);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
@@ -56,9 +57,10 @@ namespace Project
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(83, 12);
+            this.textBox1.Location = new System.Drawing.Point(62, 10);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(387, 22);
+            this.textBox1.Size = new System.Drawing.Size(291, 20);
             this.textBox1.TabIndex = 3;
             // 
             // label2
@@ -66,9 +68,10 @@ namespace Project
             this.label2.AutoSize = true;
             this.label2.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 9);
+            this.label2.Location = new System.Drawing.Point(9, 7);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 25);
+            this.label2.Size = new System.Drawing.Size(46, 20);
             this.label2.TabIndex = 4;
             this.label2.Text = "Path";
             // 
@@ -77,9 +80,10 @@ namespace Project
             this.label3.AutoSize = true;
             this.label3.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(12, 40);
+            this.label3.Location = new System.Drawing.Point(9, 32);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(0, 25);
+            this.label3.Size = new System.Drawing.Size(0, 20);
             this.label3.TabIndex = 4;
             // 
             // listView2
@@ -91,10 +95,12 @@ namespace Project
             this.columnHeader4,
             this.columnHeader5});
             this.listView2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listView2.FullRowSelect = true;
             this.listView2.HideSelection = false;
-            this.listView2.Location = new System.Drawing.Point(155, 75);
+            this.listView2.Location = new System.Drawing.Point(116, 61);
+            this.listView2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(813, 448);
+            this.listView2.Size = new System.Drawing.Size(611, 365);
             this.listView2.TabIndex = 5;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -121,14 +127,15 @@ namespace Project
             // 
             // ClientMail
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(980, 542);
+            this.ClientSize = new System.Drawing.Size(735, 440);
             this.Controls.Add(this.listView2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.listView1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "ClientMail";
             this.Text = "ClientMail";
             this.Load += new System.EventHandler(this.ClientMail_Load);
