@@ -105,7 +105,7 @@ namespace Project
                         "S: *LIST  (|Sent) '/' '[Gmail]/Sent Mail'\n" +
                         "S: *LIST  (|Junk) '/' '[Gmail]/Spam'\n" +
                         "S: *LIST  (|Flagged) '/' '[Gmail]/Starred'\n" +
-                        "S: *LIST  (|Trash) '/' '[Gmail]/Trash'\nS: " +*/
+                        "S: *LIST  (|Trash) '/' '[Gmail]/Trash'\nS: " +*//
             }
         }
         // Nhan message tu client
