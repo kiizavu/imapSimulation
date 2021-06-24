@@ -37,7 +37,13 @@ namespace Project
             }
             else
             {
-                if (readData.Contains($"tag OK [READ-WRITE] {selected} selected. (Success)"))
+                if (readData.Contains("* LIST "))
+                {
+                    readData = readData.Substring(7);
+                    string[] folder = readData.Split('\n');
+                    listView1.Items.Add(folder[0]);
+                }
+                else if (readData.Contains($"tag OK [READ-WRITE] {selected} selected. (Success)"))
                 {
                     numberOfMail = 0;
                     string mess = "tag uid search all\n";
@@ -48,14 +54,17 @@ namespace Project
                     int index = readData.IndexOf("\ntag OK SEARCH completed (Success)");
                     string uids = readData.Substring(9, index);
                     index = uids.IndexOf("\ntag");
-                    uids = uids.Substring(0, index - 1);
-                    string[] words = uids.Split(delimiterChars);
-                    string mess = "tag uid fetch ";
-                    foreach (var item in words)
+                    if (index > 0)
                     {
-                        mess += item + " ";
+                        uids = uids.Substring(0, index - 1);
+                        string[] words = uids.Split(delimiterChars);
+                        string mess = "tag uid fetch ";
+                        foreach (var item in words)
+                        {
+                            mess += item + " ";
+                        }
+                        SendMess(mess + "\n");
                     }
-                    SendMess(mess + "\n");
                 }
                 else if (readData.Contains("-"))
                 {
@@ -92,6 +101,7 @@ namespace Project
                 tcpClient.Close();
             }
         }
+
         private void ClientMail_Load(object sender, EventArgs e)
         {
             //connect to server
@@ -108,40 +118,18 @@ namespace Project
                 return;
             }
             Thread thread = new Thread(getMess);
-            thread.IsBackground = false;
+            thread.IsBackground = true;
             thread.Start();
 
-            //lấy ổ đĩa
-            DriveInfo[] drives = DriveInfo.GetDrives();
-            string path = Path.GetDirectoryName(Application.ExecutablePath) + "\\Inbox";//tùy vào máy mỗi ng
-            Fill(path);
-            textBox1.Text = path;
+            Thread.Sleep(100);
+            listView1.Items.Clear();
+            string mess = "tag list" + "\n";
+            SendMess(mess);
         }
 
-        //điền vào listview
-        void Fill(string path)
-        {
-            DirectoryInfo DI = new DirectoryInfo(@path);
-            DirectoryInfo[] directories = DI.GetDirectories();
-            FileInfo[] files = DI.GetFiles();
-
-            //duyet folder
-            foreach (DirectoryInfo di in directories)
-            {
-                ListViewItem lvi = new ListViewItem(di.Name);
-                listView1.Items.Add(lvi);
-            }
-
-            //duyet file
-            foreach (FileInfo fi in files)
-            {
-                ListViewItem lvi = new ListViewItem(fi.Name);
-                listView1.Items.Add(lvi);
-            }
-        }
         private string SendMess(string mess)
         {
-            Byte[] data = Encoding.UTF8.GetBytes(mess);
+            byte[] data = Encoding.UTF8.GetBytes(mess);
             ns.Write(data, 0, data.Length);
             ns.Flush();
             return mess;
@@ -152,7 +140,7 @@ namespace Project
         {
             listView2.Items.Clear();
             selected = listView1.SelectedItems[0].Text;
-            string mess = "tag select " + '"' + selected + '"' + "\n";
+            string mess = "tag select " + "'" + selected + "'" + "\n";
             SendMess(mess);
         }
     }

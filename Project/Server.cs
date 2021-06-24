@@ -85,12 +85,36 @@ namespace Project
 
         string rootPath = Path.GetDirectoryName(Application.ExecutablePath) + @"/Inbox/";
         string path = null;
+
+
+        private void GetMailFoldder(string mess, Socket client)
+        {
+            if (mess.Contains("tag list"))
+            {
+                DirectoryInfo DI = new DirectoryInfo(rootPath);
+                DirectoryInfo[] directories = DI.GetDirectories();
+
+                //duyet folder
+                foreach (var item in directories)
+                {
+                    sendMess($"* LIST {item.Name}\n", client);
+                }
+                return;
+            }
+            else if (!mess.Contains("tag list"))
+            {
+                return;
+            }
+        }
+
+
+
         //phan hoi tu server
         private void StatusResponse(string mess, Socket client)
         {
             string[] subpath = { "All mail", "Draft", "Flagged", "Important", "Sent", "Starred", "Trash" };
             if (mess.Contains("tag select"))
-            {
+                {
                 for(int i = 0; i < subpath.Length; i++)
                 {
                     if (mess.Contains(subpath[i]))
@@ -124,7 +148,7 @@ namespace Project
                         string uid = fi[i].Name;
                         returnData += uid + " ";
                     }
-                    returnData += "\ntag OK SEARCH completed (Success)";
+                    returnData += "\ntag OK SEARCH completed (Success)\n";
                     sendMess(returnData, client);
                 }
                 catch { }
@@ -166,20 +190,6 @@ namespace Project
 
         }
 
-
-
-        /*private string AutoRep(int a)//chua xong
-        {
-            int temp = Int32.Parse(a);
-            switch(temp){
-                case 1:
-                    return "Client Connected";
-                    break;
-                case 2:
-                    break;
-            }
-            return rev;
-        }*/
         // Nhan message tu client
         void getMess(object obj)
         {
@@ -190,7 +200,6 @@ namespace Project
                 byte[] recv = new byte[1];
 
                 var endPoint = (IPEndPoint)client.RemoteEndPoint;
-                //sendMess(AutoRep(endPoint + "","1"), client);
                 sendMess("C: " + endPoint + " connected to the server.\n", client);
                 while (client.Connected)
                 {
@@ -202,6 +211,7 @@ namespace Project
                     } while (text[text.Length - 1] != '\n');
 
                     richTextBox1.Text += endPoint + ": " + text;
+                    GetMailFoldder(text, client);
                     StatusResponse(text, client);
                     GetMailUID(text, client);
                     FetchUID(text, client);
