@@ -37,6 +37,7 @@ namespace Project
             {
                 if (readData.Contains($"tag OK [READ-WRITE] {selected} selected. (Success)"))
                 {
+                    numberOfMail = 0;
                     string mess = "tag uid search all\n";
                     SendMess(mess);
                 }
