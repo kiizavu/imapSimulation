@@ -40,6 +40,7 @@ namespace Project
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.btnLogout = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listView1
@@ -119,11 +120,23 @@ namespace Project
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
             // 
+            // btnLogout
+            // 
+            this.btnLogout.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnLogout.Location = new System.Drawing.Point(791, 18);
+            this.btnLogout.Name = "btnLogout";
+            this.btnLogout.Size = new System.Drawing.Size(134, 31);
+            this.btnLogout.TabIndex = 7;
+            this.btnLogout.Text = "Logout";
+            this.btnLogout.UseVisualStyleBackColor = true;
+            this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click_1);
+            // 
             // ClientMail
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(980, 542);
+            this.Controls.Add(this.btnLogout);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.listView2);
             this.Controls.Add(this.label3);
@@ -150,5 +163,6 @@ namespace Project
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Button btnLogout;
     }
 }

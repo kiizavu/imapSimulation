@@ -32,7 +32,7 @@ namespace Project
 
         private void btnClientMail_Click(object sender, EventArgs e)
         {
-            ClientMail cm = new ClientMail();
+            Login cm = new Login();
             cm.Show();
         }
     }

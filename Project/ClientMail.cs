@@ -11,6 +11,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using S22.Imap;
 
 namespace Project
 {
@@ -24,7 +25,7 @@ namespace Project
             InitializeComponent();
         }
 
-        const string path = @"E:\Bài Tập\Visual Studio\ImapSimulation\INBOX";//tùy vào máy mỗi ng
+        const string path = @"D:\IMAP";//tùy vào máy mỗi ng
         private void msg()
         {
             if (this.InvokeRequired)
@@ -111,6 +112,34 @@ namespace Project
             ns.Flush();
             richTextBox1.Text += mess;
             return mess;
+        }
+
+        ///////////////Logout////////////////
+        CancellationTokenSource source = null;
+        public Login log { get; set; }
+
+        public ImapClient client { get; set; }
+
+        static private void showLoginForm()
+        {
+            Login login = new Login();
+            login.ShowDialog();
+        }
+
+        private void btnLogout_Click_1(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure ?", "Log out", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                if (source != null)
+                {
+                    source.Cancel();
+                    source.Dispose();
+                }
+                client.Logout();
+                this.Close();
+            }
         }
     }
 }
