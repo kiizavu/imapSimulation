@@ -170,12 +170,15 @@ namespace Project
             SendMess(mess);
         }
 
-        private void listView2_ItemActivate(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            ismailselected = 1;
-            string mailselected = listView2.SelectedItems[0].Text;
-            string mess = "tag uid fetch " + mailselected + '\n';
+            richTextBox1.Text = "";
+            string mess = "tag search " + textBox1.Text + '\n';
             SendMess(mess);
         }
+        //Xoa listView2
+        /*Go date voi ngay neu can tim, tuong tu voi from va cac thu khac
+         VD: go search from Name trong textbox, no se gui tin nhan tag search voi
+        thu can tim trong textbox sang server*/
     }
 }

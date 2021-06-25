@@ -159,8 +159,56 @@ namespace Project
             }
             
         }
-        /// <summary>
-        
+        //Search
+
+        private string[] ReadFiles(string word)
+        {
+            string read = "";
+            string[] uids = new string[10000];
+            int i = 0;
+            string[] subpath = { "All mail", "Draft", "Flagged", "Important", "Sent", "Starred", "Trash" };
+            DirectoryInfo d = new DirectoryInfo(rootPath);
+            DirectoryInfo[] di = d.GetDirectories();
+            FileInfo[] subdi = new FileInfo[10000];
+            foreach (var item in di)
+            {
+                subdi = item.GetFiles();
+                foreach (var file in subdi)
+                {
+                    if (file.Name != null)
+                    {
+                        string c = word.Trim('\n');
+                        read = File.ReadLines(file.FullName).Skip(1).Take(1).First();
+                        if (c == read)
+                        {
+                            uids[i] = file.Name;
+                            i++;
+                        }
+                    }
+                }
+            }
+            return uids;
+        }
+        private void SearchMail(string mess, Socket client)
+        {
+            string cut = mess;
+            string from = "";
+            string[] uids = new string[100000];
+            if (mess.Contains("tag search from "))
+            {
+                for(int i = 16; i < cut.Length; i++)
+                {
+                    from += cut[i]; 
+                }
+                uids = ReadFiles(from);
+                foreach(var item in uids)
+                {
+                    sendMess(item, client);
+                }
+            }
+
+            return;
+        }
 
         private void FetchUID(string mess, Socket client)
         {
@@ -215,7 +263,7 @@ namespace Project
                     StatusResponse(text, client);
                     GetMailUID(text, client);
                     FetchUID(text, client);
-
+                    SearchMail(text, client);
                 }
             }
             catch
