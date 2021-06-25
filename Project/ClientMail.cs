@@ -24,7 +24,8 @@ namespace Project
         string readData = null;
         string selectedFolder;
         int numberOfMail = 0;
-        int ismailselected = 0;
+        int isMailSelected = 0;
+
         public ClientMail()
         {
             InitializeComponent();
@@ -38,21 +39,21 @@ namespace Project
             }
             else
             {
-                if (readData.Contains("* LIST "))
+                if (readData.Contains("* LIST ")) //List folder
                 {
                     readData = readData.Substring(7);
                     string[] folder = readData.Split('\n');
                     listView1.Items.Add(folder[0]);
                 }
-                else if (readData.Contains($"tag OK [READ-WRITE] {selectedFolder} selected. (Success)"))
+                else if (readData.Contains($"tag OK {selectedFolder} selected. (Success)")) //Select folder
                 {
                     numberOfMail = 0;
                     string mess = "tag uid search all\n";
                     SendMess(mess);
                 }
-                else if (readData.Contains("* SEARCH"))
+                else if (readData.Contains("* SEARCH")) //Search mail uid in folder
                 {
-                    int index = readData.IndexOf("\ntag OK SEARCH completed (Success)");
+                    int index = readData.IndexOf("\ntag OK SEARCH completed. (Success)");
                     string uids = readData.Substring(9, index);
                     index = uids.IndexOf("\ntag");
                     if (index > 0)
@@ -67,7 +68,7 @@ namespace Project
                         SendMess(mess + "\n");
                     }
                 }
-                else if (readData.Contains("-") && ismailselected == 0)
+                else if (readData.Contains("-") && isMailSelected == 0) //List mail to list view
                 {
                     string[] words = readData.Split('-');
                     listView2.Items.Add(words[0]);
@@ -77,7 +78,7 @@ namespace Project
                     }
                     numberOfMail++;
                 }
-                else if (readData.Contains("-") && ismailselected == 1)
+                else if (readData.Contains("-") && isMailSelected == 1) //Select mail
                 {
                     richTextBox1.Text = "";
                     string[] s = readData.Split('-');
@@ -85,7 +86,7 @@ namespace Project
                     string subject = s[2];
                     string date = s[3];
                     richTextBox1.Text += from + '\n' + subject + '\n' + date + '\n';
-                    ismailselected = 0;
+                    isMailSelected = 0;
                 }
             }
         }
@@ -138,7 +139,7 @@ namespace Project
             SendMess(mess);
 
             selectedFolder = "All mail";
-            mess = "tag select " + "'" + selectedFolder + "'" + "\n";
+            mess = "tag select " + "\"" + selectedFolder + "\"" + "\n";
             SendMess(mess);
         }
 
@@ -155,13 +156,13 @@ namespace Project
         {
             listView2.Items.Clear();
             selectedFolder = listView1.SelectedItems[0].Text;
-            string mess = "tag select " + "'" + selectedFolder + "'" + "\n";
+            string mess = "tag select " + "\"" + selectedFolder + "\"" + "\n";
             SendMess(mess);
         }
 
         private void listView2_ItemActivate(object sender, EventArgs e)
         {
-            ismailselected = 1;
+            isMailSelected = 1;
             string mailselected = listView2.SelectedItems[0].Text;
             string mess = "tag uid fetch " + mailselected + '\n';
             SendMess(mess);
