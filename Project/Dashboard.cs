@@ -29,5 +29,11 @@ namespace Project
             Client c = new Client();
             c.Show();
         }
+
+        private void btnClientMail_Click(object sender, EventArgs e)
+        {
+            ClientMail cm = new ClientMail();
+            cm.Show();
+        }
     }
 }

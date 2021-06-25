@@ -44,7 +44,6 @@ namespace Project
             {
                 while (true)
                 {
-                    int cc;
                     ns = tcpClient.GetStream();
                     var buffSize = tcpClient.ReceiveBufferSize;
                     byte[] data = new byte[buffSize];
@@ -63,6 +62,7 @@ namespace Project
 
         private void btnSend_Click(object sender, EventArgs e)
         {
+            bool test = true;
             if (tbMess.Text != string.Empty)
             {
                 if (tbUserName.Text != string.Empty)
@@ -85,7 +85,7 @@ namespace Project
         private void Client_Load(object sender, EventArgs e)
         {
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, 8080);
+            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, 1234);
             try
             {
                 tcpClient.Connect(iPEndPoint);
