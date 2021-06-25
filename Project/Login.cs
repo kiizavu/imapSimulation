@@ -14,15 +14,16 @@ using System.Security.Cryptography;
 
 namespace Project
 {
-    public partial class Client : Form
+    public partial class Login : Form
     {
         const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
         TcpClient tcpClient = new TcpClient();
         NetworkStream ns = default(NetworkStream);
         string readData = null;
+        public static string user;
 
-        public Client()
+        public Login()
         {
             InitializeComponent();
         }
@@ -35,7 +36,17 @@ namespace Project
             }
             else
             {
-                richTextBox1.Text += readData + "\n";
+                if (readData.Contains($"OK {tbUserName.Text} authenticated (Success)"))
+                {
+                    ClientMail clientMail = new ClientMail();
+                    clientMail.Show();
+                    clientMail.log = this;
+                    this.Visible = false;
+                }
+                else if (readData.Contains("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)"))
+                    MessageBox.Show("Username or password is incorrect!!!", "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else if (readData.Contains("The account are currently using by another person!!!"))
+                    MessageBox.Show("The account are currently using by another person!!!", "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -89,6 +100,7 @@ namespace Project
 
         private void btnSend_Click(object sender, EventArgs e)
         {
+            user = tbUserName.Text;
             if (tbPassword.Text != string.Empty && tbUserName.Text != string.Empty)
             {
                 string mess = $"tag login {tbUserName.Text} {ComputeSha512Hash(tbPassword.Text)}\n";

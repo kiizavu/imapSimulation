@@ -18,6 +18,7 @@ namespace Project
     {
         const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
+        public Login log { get; set; }
         TcpClient tcpClient = new TcpClient();
         NetworkStream ns = default(NetworkStream);
         char[] delimiterChars = { ' ', '-', '\n' };
@@ -45,34 +46,36 @@ namespace Project
                     string[] folder = readData.Split('\n');
                     listView1.Items.Add(folder[0]);
                 }
-                else if (readData.Contains($"tag OK {selectedFolder} selected. (Success)")) //Select folder
+                else if (readData.Contains($"{Login.user} OK {selectedFolder} selected. (Success)")) //Select folder
                 {
                     numberOfMail = 0;
-                    string mess = "tag uid search all\n";
+                    string mess = $"{Login.user} uid search all\n";
                     SendMess(mess);
+                }
+                else if (readData.Contains("Unknown mailbox (Failure)"))
+                {
+                    MessageBox.Show("Unknown mailbox", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else if (readData.Contains("* SEARCH")) //Search mail uid in folder
                 {
-                    int index = readData.IndexOf("\ntag OK SEARCH completed. (Success)");
-                    string uids = readData.Substring(9, index);
-                    index = uids.IndexOf("\ntag");
-                    if (index > 0)
+                    int index = readData.IndexOf($"\n{Login.user} OK SEARCH completed. (Success)");
+                    int cutLenght= readData.Substring(index).Length;
+                    int lengtOfNeed = readData.Length - cutLenght - 10;
+                    string uids = readData.Substring(9, lengtOfNeed);
+                   
+                    string[] words = uids.Split(delimiterChars);
+                    string mess = $"{Login.user} uid fetch ";
+                    foreach (var item in words)
                     {
-                        uids = uids.Substring(0, index - 1);
-                        string[] words = uids.Split(delimiterChars);
-                        string mess = "tag uid fetch ";
-                        foreach (var item in words)
-                        {
-                            mess += item + " ";
-                        }
-                        SendMess(mess + "\n");
+                        mess += item + " ";
                     }
+                    SendMess(mess + "\n");
                 }
                 else if (readData.Contains("-") && isMailSelected == 0) //List mail to list view
                 {
                     string[] words = readData.Split('-');
                     listView2.Items.Add(words[0]);
-                    for (int i = 1; i < words.Length; i++)
+                    for (int i = 1; i < words.Length - 1; i++)
                     {
                         listView2.Items[numberOfMail].SubItems.Add(words[i]);
                     }
@@ -81,11 +84,8 @@ namespace Project
                 else if (readData.Contains("-") && isMailSelected == 1) //Select mail
                 {
                     richTextBox1.Text = "";
-                    string[] s = readData.Split('-');
-                    string from = s[1];
-                    string subject = s[2];
-                    string date = s[3];
-                    richTextBox1.Text += from + '\n' + subject + '\n' + date + '\n';
+                    string mailContaint = readData.Replace('-','\n');
+                    richTextBox1.Text = mailContaint;
                     isMailSelected = 0;
                 }
             }
@@ -135,11 +135,11 @@ namespace Project
 
             Thread.Sleep(100);
             listView1.Items.Clear();
-            string mess = "tag list" + "\n";
+            string mess = $"{Login.user} list" + "\n";
             SendMess(mess);
 
             selectedFolder = "All mail";
-            mess = "tag select " + "\"" + selectedFolder + "\"" + "\n";
+            mess = $"{Login.user} select " + "\"" + selectedFolder + "\"" + "\n";
             SendMess(mess);
         }
 
@@ -156,7 +156,7 @@ namespace Project
         {
             listView2.Items.Clear();
             selectedFolder = listView1.SelectedItems[0].Text;
-            string mess = "tag select " + "\"" + selectedFolder + "\"" + "\n";
+            string mess = $"{Login.user} select " + "\"" + selectedFolder + "\"" + "\n";
             SendMess(mess);
         }
 
@@ -164,7 +164,7 @@ namespace Project
         {
             isMailSelected = 1;
             string mailselected = listView2.SelectedItems[0].Text;
-            string mess = "tag uid fetch " + mailselected + '\n';
+            string mess = $"{Login.user} uid fetch " + mailselected + '\n';
             SendMess(mess);
         }
     }

@@ -26,7 +26,7 @@ namespace Project
 
         private void btnClient_Click(object sender, EventArgs e)
         {
-            Client c = new Client();
+            Login c = new Login();
             c.Show();
         }
 
