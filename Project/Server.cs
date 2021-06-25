@@ -22,20 +22,24 @@ namespace Project
         List<Socket> clientSocketList;
         Socket listenerSocket;
         IPEndPoint ipepServer;
+        List<string> folders;
+        Dictionary<string, string> db;
 
         public Server()
         {
             InitializeComponent();
         }
 
-        //mở form là listen luôn
+
         private void Server_Load(object sender, EventArgs e)
         {
             CheckForIllegalCrossThreadCalls = false;
             Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
             serverThread.IsBackground = false;
             serverThread.Start();
+            GetAccoutDB();
         }
+
         void StartUnsafeThread()
         {
             clientSocketList = new List<Socket>();
@@ -80,113 +84,119 @@ namespace Project
                 if (item != null && item == client)
                     item.Send(Encoding.UTF8.GetBytes(s));
             }
-            richTextBox1.Text += s;
+            richTextBox1.Text += "S: " + s;
         }
 
-        string rootPath = Path.GetDirectoryName(Application.ExecutablePath) + @"/Inbox/";
-        string path = null;
+        static string rootPath = Path.GetDirectoryName(Application.ExecutablePath);
+        static string inboxPath = rootPath + @"/Inbox/";
+        static string accountDBPath = rootPath + @"/db.csv";
+        string folderPath = null;
 
 
-        private void GetMailFoldder(string mess, Socket client)
+        private void GetAccoutDB()
         {
-            if (mess.Contains("tag list"))
+            using (var reader = new StreamReader(accountDBPath))
             {
-                DirectoryInfo DI = new DirectoryInfo(rootPath);
-                DirectoryInfo[] directories = DI.GetDirectories();
-
-                //duyet folder
-                foreach (var item in directories)
+                db = new Dictionary<string, string>();
+                while (!reader.EndOfStream)
                 {
-                    sendMess($"* LIST {item.Name}\n", client);
+                    var line = reader.ReadLine();
+                    var values = line.Split(',');
+                    db.Add(values[0], values[1]);
                 }
-                return;
-            }
-            else if (!mess.Contains("tag list"))
-            {
-                return;
             }
         }
 
-
-        //phan hoi tu server
-        private void StatusResponse(string mess, Socket client)
+        private bool CheckAccount(string user, string pass)
         {
-            string[] subpath = { "All mail", "Draft", "Flagged", "Important", "Sent", "Starred", "Trash" };
-            if (mess.Contains("tag select"))
-                {
-                for(int i = 0; i < subpath.Length; i++)
-                {
-                    if (mess.Contains(subpath[i]))
-                    {
-                        path = rootPath + subpath[i];
-                        sendMess($"tag OK [READ-WRITE] {subpath[i]} selected. (Success)\n", client);
-                        return;
-                    }
-                }
-                sendMess("Unknown mailbox\n", client);
-                return;
-            }
-            else if(!mess.Contains("tag select"))
+            foreach (var item in db)
             {
-                return;
+                if (user == item.Key)
+                    if (pass == item.Value)
+                        return true;
             }
+            return false;
         }
 
-        private void GetMailUID(string mess, Socket client)
+        private void LoginRequest(string mess, Socket client)
         {
-            if (mess.Contains("tag uid search all"))
+            string[] words = mess.Split(delimiterChars);
+            if (CheckAccount(words[2], words[3]))
+                sendMess("Correct!!!", client);
+            else
+                sendMess("Username or password is incorrect!!!", client);
+        }
+
+        private void GetMailFoldders(Socket client)
+        {
+            folders = new List<string>();
+            DirectoryInfo DI = new DirectoryInfo(inboxPath);
+            DirectoryInfo[] directories = DI.GetDirectories();
+
+            //duyet folder
+            foreach (var item in directories)
             {
-                FileInfo[] fi = new FileInfo[100000];
-                DirectoryInfo di = new DirectoryInfo(path);
-                fi = di.GetFiles();
-                try
+                sendMess($"* LIST {item.Name}\n", client);
+                folders.Add(item.Name);
+            }
+            return;
+        }
+
+
+        private void SelectFolder(string mess, Socket client)
+        {
+            foreach(var item in folders)
+            {
+                if (mess.Contains(item))
                 {
-                    string returnData = "* SEARCH ";
-                    for (int i = 0; i < fi.Length; i++)
-                    {
-                        string uid = fi[i].Name;
-                        returnData += uid + " ";
-                    }
-                    returnData += "\ntag OK SEARCH completed (Success)\n";
-                    sendMess(returnData, client);
+                    folderPath = inboxPath + item;
+                    sendMess($"tag OK {item} selected. (Success)\n", client);
+                    return;
                 }
-                catch { }
-                return;
             }
-            else if(!mess.Contains("tag uid search all"))
+            sendMess("Unknown mailbox\n", client);
+            return;
+        }
+
+        private void GetMailUID(Socket client)
+        {
+            FileInfo[] fi = new FileInfo[100000];
+            DirectoryInfo di = new DirectoryInfo(folderPath);
+            fi = di.GetFiles();
+            try
             {
-                return;
+                string returnData = "* SEARCH ";
+                for (int i = 0; i < fi.Length; i++)
+                {
+                    string uid = fi[i].Name;
+                    returnData += uid + " ";
+                }
+                returnData += "\ntag OK SEARCH completed. (Success)\n";
+                sendMess(returnData, client);
             }
-            
+            catch { }
+            return;
         }
 
 
         private void FetchUID(string mess, Socket client)
         {
-            if (mess.Contains("tag uid fetch"))
+            try
             {
-                try
+                mess = mess.Substring(14);
+                string[] uids = mess.Split(delimiterChars);
+                foreach (var item in uids)
                 {
-                    mess = mess.Substring(14);
-                    string[] uids = mess.Split(delimiterChars);
-                    foreach (var item in uids)
-                    {
-                        string date = File.ReadLines(path + "/" + item).Skip(0).Take(1).First();
-                        string from = File.ReadLines(path + "/" + item).Skip(1).Take(1).First();
-                        string sub = File.ReadLines(path + "/" + item).Skip(2).Take(1).First();
-                        string returnData = item + "-" + from + "-" + sub + "-" + date;
-                        sendMess(returnData, client);
-                    }
-                    
+                    string date = File.ReadLines(folderPath + "/" + item).Skip(0).Take(1).First();
+                    string from = File.ReadLines(folderPath + "/" + item).Skip(1).Take(1).First();
+                    string sub = File.ReadLines(folderPath + "/" + item).Skip(2).Take(1).First();
+                    string returnData = item + "-" + from + "-" + sub + "-" + date + "\n";
+                    sendMess(returnData, client);
                 }
-                catch { }
-                return;
+                    
             }
-            else if (!mess.Contains("tag uid fetch"))
-            {
-                return;
-            }
-
+            catch { }
+            return;
         }
 
         // Nhan message tu client
@@ -199,7 +209,7 @@ namespace Project
                 byte[] recv = new byte[1];
 
                 var endPoint = (IPEndPoint)client.RemoteEndPoint;
-                sendMess("C: " + endPoint + " connected to the server.\n", client);
+                sendMess(endPoint + " connected to the server.\n", client);
                 while (client.Connected)
                 {
                     string text = "";
@@ -209,11 +219,18 @@ namespace Project
                         text += Encoding.UTF8.GetString(recv);
                     } while (text[text.Length - 1] != '\n');
 
-                    richTextBox1.Text += endPoint + ": " + text;
-                    GetMailFoldder(text, client);
-                    StatusResponse(text, client);
-                    GetMailUID(text, client);
-                    FetchUID(text, client);
+                    richTextBox1.Text += "C: " + endPoint + ": " + text;
+
+                    if (text.Contains("login"))
+                        LoginRequest(text, client);
+                    else if (text.Contains("list"))
+                        GetMailFoldders(client);
+                    else if (text.Contains("select"))
+                        SelectFolder(text, client);
+                    else if (text.Contains("uid search all"))
+                        GetMailUID(client);
+                    else if (text.Contains("uid fetch"))
+                        FetchUID(text, client);
 
                 }
             }
@@ -223,6 +240,12 @@ namespace Project
                 client.Close();
             }
 
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            richTextBox1.SelectionStart = richTextBox1.Text.Length;
+            richTextBox1.ScrollToCaret();
         }
     }
 }

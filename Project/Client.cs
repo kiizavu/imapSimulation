@@ -10,11 +10,14 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
+using System.Security.Cryptography;
 
 namespace Project
 {
     public partial class Client : Form
     {
+        const string IPADDRESS = "127.0.0.1";
+        const int PORT = 8080;
         TcpClient tcpClient = new TcpClient();
         NetworkStream ns = default(NetworkStream);
         string readData = null;
@@ -59,33 +62,45 @@ namespace Project
             }
         }
 
+        private string SendMess(string mess)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(mess);
+            ns.Write(data, 0, data.Length);
+            ns.Flush();
+            return mess;
+        }
+
+
+        static string ComputeSha512Hash(string rawData)
+        {
+            using (SHA512 shaM = new SHA512Managed())
+            {
+                byte[] bytes = shaM.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            bool test = true;
-            if (tbMess.Text != string.Empty)
+            if (tbPassword.Text != string.Empty && tbUserName.Text != string.Empty)
             {
-                if (tbUserName.Text != string.Empty)
-                {
-                    string mess = tbUserName.Text + ": " + tbMess.Text + '\n';
-                    Byte[] data = Encoding.UTF8.GetBytes(mess);
-                    ns.Write(data, 0, data.Length);
-                    ns.Flush();
-                    richTextBox1.Text += mess;
-                    tbMess.Text = string.Empty;
-                }
-                else
-                {
-                    MessageBox.Show("Please enter USERNAME!!!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
+                string mess = $"tag login {tbUserName.Text} {ComputeSha512Hash(tbPassword.Text)}\n";
+                SendMess(mess);
             }
 
         }
 
         private void Client_Load(object sender, EventArgs e)
         {
-            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, 1234);
+            IPAddress ipAddress = IPAddress.Parse(IPADDRESS);
+            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, PORT);
             try
             {
                 tcpClient.Connect(iPEndPoint);
