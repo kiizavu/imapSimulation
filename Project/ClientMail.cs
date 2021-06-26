@@ -18,14 +18,15 @@ namespace Project
     {
         const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
-        public Login log { get; set; }
-        TcpClient tcpClient = new TcpClient();
-        NetworkStream ns = default(NetworkStream);
         char[] delimiterChars = { ' ', '-', '\n' };
-        string readData = null;
+        string serverResponse = null;
         string selectedFolder;
         int numberOfMail = 0;
         int isMailSelected = 0;
+
+        public Login log { get; set; }
+        TcpClient tcpClient = new TcpClient();
+        NetworkStream ns = default(NetworkStream);
 
         public ClientMail()
         {
@@ -40,30 +41,30 @@ namespace Project
             }
             else
             {
-                if (readData.Contains("* LIST ")) //List folder
+                if (serverResponse.Contains("* LIST "))                                                      // List folder
                 {
-                    readData = readData.Substring(7);
-                    string[] folder = readData.Split('\n');
+                    serverResponse = serverResponse.Substring(7);
+                    string[] folder = serverResponse.Split('\n');
                     listView1.Items.Add(folder[0]);
                 }
-                else if (readData.Contains($"{Login.user} OK {selectedFolder} selected. (Success)")) //Select folder
+                else if (serverResponse.Contains($"{Login.user} OK {selectedFolder} selected. (Success)"))  // Select folder
                 {
                     numberOfMail = 0;
                     string mess = $"{Login.user} uid search all\n";
                     SendMess(mess);
                 }
-                else if (readData.Contains("Unknown mailbox (Failure)"))
+                else if (serverResponse.Contains("Unknown mailbox (Failure)"))                               // If folder is not exist
                 {
                     MessageBox.Show("Unknown mailbox", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                else if (readData.Contains("* SEARCH")) //Search mail uid in folder
+                else if (serverResponse.Contains("* SEARCH"))                                               // Search mail uid in folder
                 {
-                    int index = readData.IndexOf($"\n{Login.user} OK SEARCH completed. (Success)");
-                    int cutLenght= readData.Substring(index).Length;
-                    int lengtOfNeed = readData.Length - cutLenght - 10;
+                    int index = serverResponse.IndexOf($"\n{Login.user} OK SEARCH completed. (Success)");
+                    int cutLenght= serverResponse.Substring(index).Length;
+                    int lengtOfNeed = serverResponse.Length - cutLenght - 10;
                     if (lengtOfNeed > 0)
                     {
-                        string uids = readData.Substring(9, lengtOfNeed);
+                        string uids = serverResponse.Substring(9, lengtOfNeed);
 
                         string[] words = uids.Split(delimiterChars);
                         string mess = $"{Login.user} uid fetch ";
@@ -74,9 +75,9 @@ namespace Project
                         SendMess(mess + "\n");
                     }
                 }
-                else if (readData.Contains("-") && isMailSelected == 0) //List mail to list view
+                else if (serverResponse.Contains("-") && isMailSelected == 0)                               // List mail to list view
                 {
-                    string[] words = readData.Split('-');
+                    string[] words = serverResponse.Split('-');
                     listView2.Items.Add(words[0]);
                     for (int i = 1; i < words.Length - 1; i++)
                     {
@@ -84,12 +85,18 @@ namespace Project
                     }
                     numberOfMail++;
                 }
-                else if (readData.Contains("-") && isMailSelected == 1) //Select mail
+                else if (serverResponse.Contains("-") && isMailSelected == 1)                               // Select mail
                 {
                     richTextBox1.Text = "";
-                    string mailContaint = readData.Replace('-','\n');
+                    string mailContaint = serverResponse.Replace('-','\n');
                     richTextBox1.Text = mailContaint;
                     isMailSelected = 0;
+                }
+                else if (serverResponse.Contains("OK LOGOUT completed"))                                    // Logout
+                {
+                    this.log.initData();
+                    this.log.Visible = true;
+                    this.Close();
                 }
             }
         }
@@ -107,7 +114,7 @@ namespace Project
                     byte[] data = new byte[buffSize];
                     ns.Read(data, 0, buffSize);
                     returnData = Encoding.UTF8.GetString(data);
-                    readData = returnData;
+                    serverResponse = returnData;
                     msg();
                 }
             }
@@ -115,6 +122,14 @@ namespace Project
             {
                 tcpClient.Close();
             }
+        }
+
+        private string SendMess(string mess)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(mess);
+            ns.Write(data, 0, data.Length);
+            ns.Flush();
+            return mess;
         }
 
         private void ClientMail_Load(object sender, EventArgs e)
@@ -146,15 +161,6 @@ namespace Project
             SendMess(mess);
         }
 
-        private string SendMess(string mess)
-        {
-            byte[] data = Encoding.UTF8.GetBytes(mess);
-            ns.Write(data, 0, data.Length);
-            ns.Flush();
-            return mess;
-        }
-        //Bam vao hien file
-        //Lay subpath
         private void listView1_ItemActivate(object sender, EventArgs e)
         {
             listView2.Items.Clear();
@@ -169,6 +175,17 @@ namespace Project
             string mailselected = listView2.SelectedItems[0].Text;
             string mess = $"{Login.user} uid fetch " + mailselected + '\n';
             SendMess(mess);
+        }
+
+        private void btnLogOut_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure ?", "Log out", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                string mess = $"{Login.user} logout\n";
+                SendMess(mess);
+            }
         }
     }
 }
