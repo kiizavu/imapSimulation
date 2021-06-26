@@ -18,24 +18,28 @@ namespace Project
     {
         const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
+        static string rootPath = Path.GetDirectoryName(Application.ExecutablePath);
+        static string accountDBPath = rootPath + @"/db.csv";
         char[] delimiterChars = { ' ', '-', '\n' };
-        List<Socket> clientSocketList;
+
         Socket listenerSocket;
         IPEndPoint ipepServer;
+        List<Socket> clientSocketList;
+        Dictionary<string, string> db;
+        Dictionary<string, pathForClient> clientsList;
+
+        struct pathForClient
+        {
+            public string inboxPath;
+            public string selectFolderPath;
+            public List<string> folders;
+        }
 
         public Server()
         {
             InitializeComponent();
         }
 
-        //mở form là listen luôn
-        private void Server_Load(object sender, EventArgs e)
-        {
-            CheckForIllegalCrossThreadCalls = false;
-            Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
-            serverThread.IsBackground = false;
-            serverThread.Start();
-        }
         void StartUnsafeThread()
         {
             clientSocketList = new List<Socket>();
@@ -62,17 +66,16 @@ namespace Project
                 catch
                 {
                     listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    ipepServer = new IPEndPoint(IPAddress.Any, 1234);
+                    ipepServer = new IPEndPoint(IPAddress.Parse(IPADDRESS), PORT);
                     listenerSocket.Bind(ipepServer);
                 }
 
             });
             listen.IsBackground = true;
             listen.Start();
-            richTextBox1.Text = "S: " + "OK " + "IMAP4rev1 server ready.\n";
+            richTextBox1.Text = "S: " + "OK " + "IMAP server ready.\n";
         }
 
-        // Gui lai message cho client
         void sendMess(string s, Socket client)
         {
             foreach (Socket item in clientSocketList)
@@ -80,113 +83,177 @@ namespace Project
                 if (item != null && item == client)
                     item.Send(Encoding.UTF8.GetBytes(s));
             }
-            richTextBox1.Text += s;
+            richTextBox1.Text += "S: " + s;
         }
 
-        string rootPath = Path.GetDirectoryName(Application.ExecutablePath) + @"/Inbox/";
-        string path = null;
-
-
-        private void GetMailFoldder(string mess, Socket client)
+        private void GetAccoutDB()                                          // Save database of accounts to a dictionary
         {
-            if (mess.Contains("tag list"))
+            using (var reader = new StreamReader(accountDBPath))
             {
-                DirectoryInfo DI = new DirectoryInfo(rootPath);
-                DirectoryInfo[] directories = DI.GetDirectories();
-
-                //duyet folder
-                foreach (var item in directories)
+                db = new Dictionary<string, string>();
+                while (!reader.EndOfStream)
                 {
-                    sendMess($"* LIST {item.Name}\n", client);
+                    var line = reader.ReadLine();
+                    var values = line.Split(',');
+                    db.Add(values[0], values[1]);
                 }
-                return;
-            }
-            else if (!mess.Contains("tag list"))
-            {
-                return;
             }
         }
 
-
-        //phan hoi tu server
-        private void StatusResponse(string mess, Socket client)
+        private bool CheckAccount(string user, string pass)                 // Check if username and password client sent is correct
         {
-            string[] subpath = { "All mail", "Draft", "Flagged", "Important", "Sent", "Starred", "Trash" };
-            if (mess.Contains("tag select"))
+            foreach (var item in db)
+            {
+                if (user == item.Key)
+                    if (pass == item.Value)
+                        return true;
+            }
+            return false;
+        }
+
+        private void UpdateValueForClient(ref Dictionary<string, pathForClient> clientsList, string user, string inboxPath, string selectFolderPath, List<string> folders)  // Update the value of specific key in clients list
+        {
+            pathForClient pFC;
+            pFC.inboxPath = clientsList[user].inboxPath;
+            pFC.selectFolderPath = selectFolderPath;
+            pFC.folders = folders;
+
+            clientsList[user] = pFC;
+        }
+
+        private void LoginRequest(string mess, Socket client)               // Response when client send login request
+        {
+            string[] words = mess.Split(delimiterChars);
+            if (CheckAccount(words[2], words[3]))
+            {
+                if (!clientsList.ContainsKey(words[2]))
                 {
-                for(int i = 0; i < subpath.Length; i++)
-                {
-                    if (mess.Contains(subpath[i]))
-                    {
-                        path = rootPath + subpath[i];
-                        sendMess($"tag OK [READ-WRITE] {subpath[i]} selected. (Success)\n", client);
-                        return;
-                    }
+                    pathForClient pFC;
+                    pFC.inboxPath = rootPath + $@"/{words[2]}/";
+                    pFC.selectFolderPath = null;
+                    pFC.folders = null;
+                    clientsList.Add(words[2], pFC);
+                    sendMess($"tag OK {words[2]} authenticated (Success)", client);
                 }
-                sendMess("Unknown mailbox\n", client);
-                return;
+                else
+                    sendMess("This account are currently using by another person!!!", client);
             }
-            else if(!mess.Contains("tag select"))
-            {
-                return;
-            }
+            else
+                sendMess("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)", client);
         }
 
-        private void GetMailUID(string mess, Socket client)
+        private void GetMailFolders(string user, Socket client)             // Response when client send LIST folders request
         {
-            if (mess.Contains("tag uid search all"))
+            List<string> foldersOfClient = new List<string>();
+            string inboxPathOfClient = clientsList[user].inboxPath;
+
+            DirectoryInfo DI = new DirectoryInfo(inboxPathOfClient);
+            DirectoryInfo[] directories = DI.GetDirectories();
+
+            //duyet folder
+            foreach (var item in directories)
             {
-                FileInfo[] fi = new FileInfo[100000];
-                DirectoryInfo di = new DirectoryInfo(path);
-                fi = di.GetFiles();
-                try
+                sendMess($"* LIST {item.Name}\n", client);
+                foldersOfClient.Add(item.Name);
+            }
+
+            UpdateValueForClient(ref clientsList, user, inboxPathOfClient, null, foldersOfClient);
+
+            return;
+        }
+
+        private void SelectFolder(string mess, Socket client)               // Response when client send SELECT folder request
+        {
+            string[] words = mess.Split(delimiterChars);
+
+            string inboxPath = clientsList[words[0]].inboxPath;
+            string selectFolderPath = clientsList[words[0]].selectFolderPath;
+            List<string> folders = clientsList[words[0]].folders;
+
+            foreach (var item in folders)
+            {
+                if (mess.Contains(item))
                 {
-                    string returnData = "* SEARCH ";
-                    for (int i = 0; i < fi.Length; i++)
+                    selectFolderPath = inboxPath + item;
+                    UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
+                    sendMess($"{words[0]} OK {item} selected. (Success)\n", client);
+                    return;
+                }
+            }
+            sendMess("Unknown mailbox (Failure)\n", client);
+            return;
+        }
+
+        private void GetMailUID(string user, Socket client)                 // Response uid of mail when client send SEARCH mail in folder request
+        {
+            FileInfo[] fi = new FileInfo[100000];
+            DirectoryInfo di = new DirectoryInfo(clientsList[user].selectFolderPath);
+            fi = di.GetFiles();
+            try
+            {
+                string returnData = "* SEARCH ";
+                for (int i = 0; i < fi.Length; i++)
+                {
+                    string uid = fi[i].Name;
+                    returnData += uid + " ";
+                }
+                returnData += $"\n{user} OK SEARCH completed. (Success)\n";
+                sendMess(returnData, client);
+            }
+            catch { }
+            return;
+        }
+
+
+        private void FetchUID(string mess, Socket client)                   // Response content of mail when client send FETCH request
+        {
+            try
+            {
+                string[] words = mess.Split(delimiterChars);
+
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+                mess = mess.Substring(11 + words[0].Length);
+                string[] uids = mess.Split(delimiterChars);
+                foreach (var item in uids)
+                {
+                    string date = File.ReadLines(selectFolderPath + "/" + item).Skip(0).Take(1).First();
+                    string from = File.ReadLines(selectFolderPath + "/" + item).Skip(1).Take(1).First();
+                    string sub = File.ReadLines(selectFolderPath + "/" + item).Skip(2).Take(1).First();
+                    string body = "";
+                    for (int i = 3; i < File.ReadLines(selectFolderPath + "/" + item).Count(); i++)
                     {
-                        string uid = fi[i].Name;
-                        returnData += uid + " ";
+                        body += File.ReadLines(selectFolderPath + "/" + item).Skip(i).Take(1).First() + "\n";
                     }
-                    returnData += "\ntag OK SEARCH completed (Success)\n";
+                    string returnData = item + "-" + from + "-" + sub + "-" + date + "-" + body;
                     sendMess(returnData, client);
                 }
-                catch { }
-                return;
+                    
             }
-            else if(!mess.Contains("tag uid search all"))
-            {
-                return;
-            }
-            
+            catch { }
+            return;
         }
 
-
-        private void FetchUID(string mess, Socket client)
+        private void LogOutClient(string user, Socket client)               // Response when client send LOGOUT request
         {
-            if (mess.Contains("tag uid fetch"))
+            try
             {
-                try
+                if (clientsList.Keys.ToList().IndexOf(user) != -1)
                 {
-                    mess = mess.Substring(14);
-                    string[] uids = mess.Split(delimiterChars);
-                    foreach (var item in uids)
-                    {
-                        string date = File.ReadLines(path + "/" + item).Skip(0).Take(1).First();
-                        string from = File.ReadLines(path + "/" + item).Skip(1).Take(1).First();
-                        string sub = File.ReadLines(path + "/" + item).Skip(2).Take(1).First();
-                        string returnData = item + "-" + from + "-" + sub + "-" + date;
-                        sendMess(returnData, client);
-                    }
-                    
+                    string returnData = $"*BYE IMAP Server logging out\nS: {user} OK LOGOUT completed\n";
+                    sendMess(returnData, client);
+                    clientsList.Remove(user);
                 }
-                catch { }
-                return;
+                else
+                {
+                    string returnData = $"*A login form has been disconnected from server!!!\n";
+                    sendMess(returnData, client);
+                }
+                clientSocketList.Remove(client);
+                client.Shutdown(SocketShutdown.Both);
+                client.Disconnect(true);
             }
-            else if (!mess.Contains("tag uid fetch"))
-            {
-                return;
-            }
-
+            catch { }
+            return;
         }
 
         // Nhan message tu client
@@ -199,7 +266,7 @@ namespace Project
                 byte[] recv = new byte[1];
 
                 var endPoint = (IPEndPoint)client.RemoteEndPoint;
-                sendMess("C: " + endPoint + " connected to the server.\n", client);
+                sendMess(endPoint + " connected to the server.\n", client);
                 while (client.Connected)
                 {
                     string text = "";
@@ -209,12 +276,23 @@ namespace Project
                         text += Encoding.UTF8.GetString(recv);
                     } while (text[text.Length - 1] != '\n');
 
-                    richTextBox1.Text += endPoint + ": " + text;
-                    GetMailFoldder(text, client);
-                    StatusResponse(text, client);
-                    GetMailUID(text, client);
-                    FetchUID(text, client);
+                    richTextBox1.Text += "C: " + endPoint + ": " + text;
 
+
+                    string[] words = text.Split(delimiterChars);
+
+                    if (text.Contains("login"))
+                        LoginRequest(text, client);
+                    else if (text.Contains("list"))
+                        GetMailFolders(words[0], client); // words[0] is username
+                    else if (text.Contains("select"))
+                        SelectFolder(text, client);
+                    else if (text.Contains("uid search all"))
+                        GetMailUID(words[0], client);
+                    else if (text.Contains("uid fetch"))
+                        FetchUID(text, client);
+                    else if (text.Contains("logout"))
+                        LogOutClient(words[0], client);
                 }
             }
             catch
@@ -223,6 +301,22 @@ namespace Project
                 client.Close();
             }
 
+        }
+
+        private void Server_Load(object sender, EventArgs e)
+        {
+            CheckForIllegalCrossThreadCalls = false;
+            Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
+            serverThread.IsBackground = false;
+            serverThread.Start();
+            GetAccoutDB();
+            clientsList = new Dictionary<string, pathForClient>();
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            richTextBox1.SelectionStart = richTextBox1.Text.Length;
+            richTextBox1.ScrollToCaret();
         }
     }
 }

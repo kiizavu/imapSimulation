@@ -30,38 +30,41 @@ namespace Project
         private void InitializeComponent()
         {
             this.btnServer = new System.Windows.Forms.Button();
-            this.btnClient = new System.Windows.Forms.Button();
+            this.btnLogin = new System.Windows.Forms.Button();
             this.btnClientMail = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnServer
             // 
             this.btnServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnServer.Location = new System.Drawing.Point(130, 56);
+            this.btnServer.Location = new System.Drawing.Point(98, 46);
+            this.btnServer.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnServer.Name = "btnServer";
-            this.btnServer.Size = new System.Drawing.Size(196, 58);
+            this.btnServer.Size = new System.Drawing.Size(147, 47);
             this.btnServer.TabIndex = 0;
             this.btnServer.Text = "Server";
             this.btnServer.UseVisualStyleBackColor = true;
             this.btnServer.Click += new System.EventHandler(this.btnServer_Click);
             // 
-            // btnClient
+            // btnLogin
             // 
-            this.btnClient.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClient.Location = new System.Drawing.Point(506, 27);
-            this.btnClient.Name = "btnClient";
-            this.btnClient.Size = new System.Drawing.Size(196, 58);
-            this.btnClient.TabIndex = 1;
-            this.btnClient.Text = "Client";
-            this.btnClient.UseVisualStyleBackColor = true;
-            this.btnClient.Click += new System.EventHandler(this.btnClient_Click);
+            this.btnLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnLogin.Location = new System.Drawing.Point(380, 22);
+            this.btnLogin.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnLogin.Name = "btnLogin";
+            this.btnLogin.Size = new System.Drawing.Size(147, 47);
+            this.btnLogin.TabIndex = 1;
+            this.btnLogin.Text = "Login";
+            this.btnLogin.UseVisualStyleBackColor = true;
+            this.btnLogin.Click += new System.EventHandler(this.btnClient_Click);
             // 
             // btnClientMail
             // 
             this.btnClientMail.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClientMail.Location = new System.Drawing.Point(506, 100);
+            this.btnClientMail.Location = new System.Drawing.Point(380, 81);
+            this.btnClientMail.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnClientMail.Name = "btnClientMail";
-            this.btnClientMail.Size = new System.Drawing.Size(196, 58);
+            this.btnClientMail.Size = new System.Drawing.Size(147, 47);
             this.btnClientMail.TabIndex = 1;
             this.btnClientMail.Text = "Client Mail";
             this.btnClientMail.UseVisualStyleBackColor = true;
@@ -69,13 +72,14 @@ namespace Project
             // 
             // Dashboard
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 192);
+            this.ClientSize = new System.Drawing.Size(600, 156);
             this.Controls.Add(this.btnClientMail);
-            this.Controls.Add(this.btnClient);
+            this.Controls.Add(this.btnLogin);
             this.Controls.Add(this.btnServer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MaximizeBox = false;
             this.Name = "Dashboard";
             this.Text = "Dashboard";
@@ -86,7 +90,7 @@ namespace Project
         #endregion
 
         private System.Windows.Forms.Button btnServer;
-        private System.Windows.Forms.Button btnClient;
+        private System.Windows.Forms.Button btnLogin;
         private System.Windows.Forms.Button btnClientMail;
     }
 }
