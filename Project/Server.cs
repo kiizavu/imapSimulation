@@ -73,7 +73,7 @@ namespace Project
             });
             listen.IsBackground = true;
             listen.Start();
-            richTextBox1.Text = "S: " + "OK " + "IMAP server ready.\n";
+            rtbCommunication.Text = "S: " + "OK " + "IMAP server ready.\n";
         }
 
         void sendMess(string s, Socket client)
@@ -83,7 +83,7 @@ namespace Project
                 if (item != null && item == client)
                     item.Send(Encoding.UTF8.GetBytes(s));
             }
-            richTextBox1.Text += "S: " + s;
+            rtbCommunication.Text += "S: " + s;
         }
 
         private void GetAccoutDB()                                          // Save database of accounts to a dictionary
@@ -133,13 +133,13 @@ namespace Project
                     pFC.selectFolderPath = null;
                     pFC.folders = null;
                     clientsList.Add(words[2], pFC);
-                    sendMess($"tag OK {words[2]} authenticated (Success)", client);
+                    sendMess($"tag OK {words[2]} authenticated (Success)\n", client);
                 }
                 else
-                    sendMess("This account are currently using by another person!!!", client);
+                    sendMess("This account are currently using by another person!!!\n", client);
             }
             else
-                sendMess("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)", client);
+                sendMess("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)\n", client);
         }
 
         private void GetMailFolders(string user, Socket client)             // Response when client send LIST folders request
@@ -276,7 +276,7 @@ namespace Project
                         text += Encoding.UTF8.GetString(recv);
                     } while (text[text.Length - 1] != '\n');
 
-                    richTextBox1.Text += "C: " + endPoint + ": " + text;
+                    rtbCommunication.Text += "C: " + endPoint + ": " + text;
 
 
                     string[] words = text.Split(delimiterChars);
@@ -293,6 +293,8 @@ namespace Project
                         FetchUID(text, client);
                     else if (text.Contains("logout"))
                         LogOutClient(words[0], client);
+                    else
+                        sendMess("* BAD Unknown command\n", client);
                 }
             }
             catch
@@ -313,10 +315,10 @@ namespace Project
             clientsList = new Dictionary<string, pathForClient>();
         }
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        private void rtbCommunication_TextChanged(object sender, EventArgs e)
         {
-            richTextBox1.SelectionStart = richTextBox1.Text.Length;
-            richTextBox1.ScrollToCaret();
+            rtbCommunication.SelectionStart = rtbCommunication.Text.Length;
+            rtbCommunication.ScrollToCaret();
         }
     }
 }
