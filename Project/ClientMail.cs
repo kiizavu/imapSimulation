@@ -16,7 +16,7 @@ namespace Project
 {
     public partial class ClientMail : Form
     {
-        const string IPADDRESS = "127.0.0.1";
+        const string IPADDRESS = "25.70.254.3";
         const int PORT = 8080;
         char[] delimiterChars = { ' ', '-', '\n' };
         string serverResponse = null;
@@ -47,7 +47,7 @@ namespace Project
                 if (serverResponse.Contains("* LIST "))                                                      // List folder
                 {
                     serverResponse = serverResponse.Substring(7);
-                    string[] folder = serverResponse.Split('\n');
+                    string[] folder = serverResponse.Split(new[] { "* LIST " }, StringSplitOptions.None);
                     listView1.Items.Add(folder[0]);
                 }
                 else if (serverResponse.Contains($"{Login.user} OK {selectedFolder} selected. (Success)"))  // Select folder
