@@ -1,7 +1,7 @@
 ﻿
 namespace Project
 {
-    partial class Client
+    partial class Login
     {
         /// <summary>
         /// Required designer variable.
@@ -30,84 +30,104 @@ namespace Project
         private void InitializeComponent()
         {
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.btnSend = new System.Windows.Forms.Button();
-            this.tbMess = new System.Windows.Forms.TextBox();
+            this.btnLogin = new System.Windows.Forms.Button();
+            this.tbPassword = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tbUserName = new System.Windows.Forms.TextBox();
+            this.cbRemember = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // richTextBox1
             // 
             this.richTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBox1.Location = new System.Drawing.Point(12, 2);
+            this.richTextBox1.Location = new System.Drawing.Point(9, 2);
+            this.richTextBox1.Margin = new System.Windows.Forms.Padding(2);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(776, 300);
+            this.richTextBox1.Size = new System.Drawing.Size(529, 244);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
-            // btnSend
+            // btnLogin
             // 
-            this.btnSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSend.Location = new System.Drawing.Point(641, 492);
-            this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(147, 48);
-            this.btnSend.TabIndex = 3;
-            this.btnSend.Text = "Send";
-            this.btnSend.UseVisualStyleBackColor = true;
-            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
+            this.btnLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnLogin.Location = new System.Drawing.Point(428, 296);
+            this.btnLogin.Margin = new System.Windows.Forms.Padding(2);
+            this.btnLogin.Name = "btnLogin";
+            this.btnLogin.Size = new System.Drawing.Size(110, 39);
+            this.btnLogin.TabIndex = 3;
+            this.btnLogin.Text = "Login";
+            this.btnLogin.UseVisualStyleBackColor = true;
+            this.btnLogin.Click += new System.EventHandler(this.btnSend_Click);
             // 
-            // tbMess
+            // tbPassword
             // 
-            this.tbMess.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbMess.Location = new System.Drawing.Point(17, 435);
-            this.tbMess.Name = "tbMess";
-            this.tbMess.Size = new System.Drawing.Size(771, 34);
-            this.tbMess.TabIndex = 4;
+            this.tbPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbPassword.Location = new System.Drawing.Point(124, 311);
+            this.tbPassword.Margin = new System.Windows.Forms.Padding(2);
+            this.tbPassword.Name = "tbPassword";
+            this.tbPassword.Size = new System.Drawing.Size(278, 28);
+            this.tbPassword.TabIndex = 4;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 383);
+            this.label2.Location = new System.Drawing.Point(9, 311);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(118, 29);
+            this.label2.Size = new System.Drawing.Size(92, 24);
             this.label2.TabIndex = 5;
-            this.label2.Text = "Message:";
+            this.label2.Text = "Password";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 322);
+            this.label1.Location = new System.Drawing.Point(9, 262);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(141, 29);
+            this.label1.Size = new System.Drawing.Size(97, 24);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Your Name:";
+            this.label1.Text = "Username";
             // 
             // tbUserName
             // 
             this.tbUserName.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbUserName.Location = new System.Drawing.Point(159, 322);
+            this.tbUserName.Location = new System.Drawing.Point(124, 262);
+            this.tbUserName.Margin = new System.Windows.Forms.Padding(2);
             this.tbUserName.Name = "tbUserName";
-            this.tbUserName.Size = new System.Drawing.Size(180, 34);
+            this.tbUserName.Size = new System.Drawing.Size(278, 28);
             this.tbUserName.TabIndex = 1;
             // 
-            // Client
+            // cbRemember
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.cbRemember.AutoSize = true;
+            this.cbRemember.Location = new System.Drawing.Point(428, 268);
+            this.cbRemember.Name = "cbRemember";
+            this.cbRemember.Size = new System.Drawing.Size(94, 17);
+            this.cbRemember.TabIndex = 6;
+            this.cbRemember.Text = "Remember me";
+            this.cbRemember.UseVisualStyleBackColor = true;
+            // 
+            // Login
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 562);
+            this.ClientSize = new System.Drawing.Size(549, 355);
+            this.Controls.Add(this.cbRemember);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbMess);
-            this.Controls.Add(this.btnSend);
+            this.Controls.Add(this.tbPassword);
+            this.Controls.Add(this.btnLogin);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbUserName);
             this.Controls.Add(this.richTextBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
-            this.Name = "Client";
+            this.Name = "Login";
             this.Text = "Client";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Login_FormClosed);
             this.Load += new System.EventHandler(this.Client_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -117,10 +137,11 @@ namespace Project
         #endregion
 
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.Button btnSend;
-        private System.Windows.Forms.TextBox tbMess;
+        private System.Windows.Forms.Button btnLogin;
+        private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbUserName;
+        private System.Windows.Forms.CheckBox cbRemember;
     }
 }
