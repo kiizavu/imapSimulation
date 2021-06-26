@@ -16,7 +16,7 @@ namespace Project
 {
     public partial class Server : Form
     {
-        const string IPADDRESS = "127.0.0.1";
+        const string IPADDRESS = "25.70.254.3";
         const int PORT = 8080;
         static string rootPath = Path.GetDirectoryName(Application.ExecutablePath);
         static string accountDBPath = rootPath + @"/db.csv";
