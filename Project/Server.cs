@@ -133,13 +133,13 @@ namespace Project
                     pFC.selectFolderPath = null;
                     pFC.folders = null;
                     clientsList.Add(words[2], pFC);
-                    sendMess($"tag OK {words[2]} authenticated (Success)", client);
+                    sendMess($"tag OK {words[2]} authenticated (Success)\n", client);
                 }
                 else
-                    sendMess("This account are currently using by another person!!!", client);
+                    sendMess("This account are currently using by another person!!!\n", client);
             }
             else
-                sendMess("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)", client);
+                sendMess("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)\n", client);
         }
 
         private void GetMailFolders(string user, Socket client)             // Response when client send LIST folders request
@@ -303,6 +303,8 @@ namespace Project
                         RelocateMail(text, client);
                     else if (text.Contains("logout"))
                         LogOutClient(words[0], client);
+                    else
+                        sendMess("* BAD Unknown command", client);
                 }
             }
             catch
