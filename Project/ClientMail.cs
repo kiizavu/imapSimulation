@@ -31,6 +31,10 @@ namespace Project
         public ClientMail()
         {
             InitializeComponent();
+            (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItemClicked +=
+                    new ToolStripItemClickedEventHandler(copy);
+            (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItemClicked +=
+                    new ToolStripItemClickedEventHandler(move);
         }
 
         private void msg()
@@ -97,6 +101,24 @@ namespace Project
                     this.log.initData();
                     this.log.Visible = true;
                     this.Close();
+                }
+                else if (readData.Contains("tag delete OK"))
+                {
+                    listView1.Items.Clear();
+                    string mess = "tag list" + "\n";
+                    SendMess(mess);
+                }    
+                else if (readData.Contains("tag create OK"))
+                {
+                    listView1.Items.Clear();
+                    string mess = "tag list" + "\n";
+                    SendMess(mess);
+                }    
+                else if (readData.Contains("tag store OK") || readData.Contains("tag move OK"))
+                {
+                    listView2.Items.Clear();
+                    string mess = "tag select " + "'" + selectedFolder + "'" + "\n";
+                    SendMess(mess);
                 }
             }
         }
