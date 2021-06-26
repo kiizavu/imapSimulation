@@ -18,17 +18,19 @@ namespace Project
     {
         const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
+        public static string user;
+        string serverResponse = null;
+
         TcpClient tcpClient = new TcpClient();
         NetworkStream ns = default(NetworkStream);
-        string readData = null;
-        public static string user;
 
         public Login()
         {
             InitializeComponent();
+            initData();
         }
 
-        private void msg()
+        private void msg()                                  // Get respone from server and do something
         {
             if (this.InvokeRequired)
             {
@@ -36,17 +38,18 @@ namespace Project
             }
             else
             {
-                if (readData.Contains($"OK {tbUserName.Text} authenticated (Success)"))
+                if (serverResponse.Contains($"OK {tbUserName.Text} authenticated (Success)"))         // If user and password is correct, open client mail form
                 {
+                    Checked();
                     ClientMail clientMail = new ClientMail();
                     clientMail.Show();
                     clientMail.log = this;
                     this.Visible = false;
                 }
-                else if (readData.Contains("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)"))
+                else if (serverResponse.Contains("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)"))      // If user and password is incorrect, show message box to infrom user
                     MessageBox.Show("Username or password is incorrect!!!", "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                else if (readData.Contains("The account are currently using by another person!!!"))
-                    MessageBox.Show("The account are currently using by another person!!!", "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else if (serverResponse.Contains("This account are currently using by another person!!!"))             // If the account is being used by another person
+                    MessageBox.Show("This account are currently using by another person!!!", "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -63,7 +66,7 @@ namespace Project
                     byte[] data = new byte[buffSize];
                     ns.Read(data, 0, buffSize);
                     returnData = Encoding.UTF8.GetString(data);
-                    readData = returnData;
+                    serverResponse = returnData;
                     msg();
                 }
             }
@@ -82,7 +85,7 @@ namespace Project
         }
 
 
-        static string ComputeSha512Hash(string rawData)
+        static string ComputeSha512Hash(string rawData)         // Hash Sha512
         {
             using (SHA512 shaM = new SHA512Managed())
             {
@@ -97,13 +100,48 @@ namespace Project
             }
         }
 
+        public void initData()
+        {
+            if (Properties.Settings.Default.UserName != string.Empty)
+            {
+                if (Properties.Settings.Default.Remme == "yes")
+                {
+                    tbUserName.Text = Properties.Settings.Default.UserName;
+                    tbPassword.Text = Properties.Settings.Default.Password;
+                    cbRemember.Checked = true;
+                }
+                else
+                {
+                    tbUserName.Text = Properties.Settings.Default.UserName;
+                    tbPassword.Text = "";
+                }
+            }
+        }
+
+        public void Checked() //Kiểm tra đã đánh dấu Remmeber me chưa ?
+        {
+            if (!cbRemember.Checked)
+            {
+                Properties.Settings.Default.UserName = tbUserName.Text;
+                Properties.Settings.Default.Password = "";
+                Properties.Settings.Default.Remme = "no";
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                Properties.Settings.Default.UserName = tbUserName.Text;
+                Properties.Settings.Default.Password = tbPassword.Text;
+                Properties.Settings.Default.Remme = "yes";
+                Properties.Settings.Default.Save();
+            }
+        }
 
         private void btnSend_Click(object sender, EventArgs e)
         {
             user = tbUserName.Text;
             if (tbPassword.Text != string.Empty && tbUserName.Text != string.Empty)
             {
-                string mess = $"tag login {tbUserName.Text} {ComputeSha512Hash(tbPassword.Text)}\n";
+                string mess = $"tag login {tbUserName.Text} {ComputeSha512Hash(tbPassword.Text)}\n";        // Hash password before send to server
                 SendMess(mess);
             }
 
@@ -129,10 +167,10 @@ namespace Project
             thread.Start();
         }
 
-        private void Client_FormClosed(object sender, FormClosedEventArgs e)
+        private void Login_FormClosed(object sender, FormClosedEventArgs e)
         {
-            ns.Close();
-            tcpClient.Close();
+            string mess = $"tag logout\n";
+            SendMess(mess);
         }
     }
 }

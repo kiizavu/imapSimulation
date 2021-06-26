@@ -18,14 +18,15 @@ namespace Project
     {
         const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
-        char[] delimiterChars = { ' ', '-', '\n' };
-        List<Socket> clientSocketList;
-        Socket listenerSocket;
-        IPEndPoint ipepServer;
-        Dictionary<string, string> db;
-
         static string rootPath = Path.GetDirectoryName(Application.ExecutablePath);
         static string accountDBPath = rootPath + @"/db.csv";
+        char[] delimiterChars = { ' ', '-', '\n' };
+
+        Socket listenerSocket;
+        IPEndPoint ipepServer;
+        List<Socket> clientSocketList;
+        Dictionary<string, string> db;
+        Dictionary<string, pathForClient> clientsList;
 
         struct pathForClient
         {
@@ -34,22 +35,9 @@ namespace Project
             public List<string> folders;
         }
 
-        Dictionary<string, pathForClient> clientsList;
-
         public Server()
         {
             InitializeComponent();
-        }
-
-
-        private void Server_Load(object sender, EventArgs e)
-        {
-            CheckForIllegalCrossThreadCalls = false;
-            Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
-            serverThread.IsBackground = false;
-            serverThread.Start();
-            GetAccoutDB();
-            clientsList = new Dictionary<string, pathForClient>();
         }
 
         void StartUnsafeThread()
@@ -85,10 +73,9 @@ namespace Project
             });
             listen.IsBackground = true;
             listen.Start();
-            richTextBox1.Text = "S: " + "OK " + "IMAP4rev1 server ready.\n";
+            richTextBox1.Text = "S: " + "OK " + "IMAP server ready.\n";
         }
 
-        // Gui lai message cho client
         void sendMess(string s, Socket client)
         {
             foreach (Socket item in clientSocketList)
@@ -99,8 +86,7 @@ namespace Project
             richTextBox1.Text += "S: " + s;
         }
 
-
-        private void GetAccoutDB()
+        private void GetAccoutDB()                                          // Save database of accounts to a dictionary
         {
             using (var reader = new StreamReader(accountDBPath))
             {
@@ -114,7 +100,7 @@ namespace Project
             }
         }
 
-        private bool CheckAccount(string user, string pass)
+        private bool CheckAccount(string user, string pass)                 // Check if username and password client sent is correct
         {
             foreach (var item in db)
             {
@@ -125,7 +111,17 @@ namespace Project
             return false;
         }
 
-        private void LoginRequest(string mess, Socket client)
+        private void UpdateValueForClient(ref Dictionary<string, pathForClient> clientsList, string user, string inboxPath, string selectFolderPath, List<string> folders)  // Update the value of specific key in clients list
+        {
+            pathForClient pFC;
+            pFC.inboxPath = clientsList[user].inboxPath;
+            pFC.selectFolderPath = selectFolderPath;
+            pFC.folders = folders;
+
+            clientsList[user] = pFC;
+        }
+
+        private void LoginRequest(string mess, Socket client)               // Response when client send login request
         {
             string[] words = mess.Split(delimiterChars);
             if (CheckAccount(words[2], words[3]))
@@ -140,23 +136,13 @@ namespace Project
                     sendMess($"tag OK {words[2]} authenticated (Success)", client);
                 }
                 else
-                    sendMess("The account are currently using by another person!!!", client);
+                    sendMess("This account are currently using by another person!!!", client);
             }
             else
                 sendMess("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)", client);
         }
 
-        private void UpdateValueForClient(ref Dictionary<string, pathForClient> clientsList, string user, string inboxPath, string selectFolderPath, List<string> folders)
-        {
-            pathForClient pFC;
-            pFC.inboxPath = clientsList[user].inboxPath;
-            pFC.selectFolderPath = selectFolderPath;
-            pFC.folders = folders;
-
-            clientsList[user] = pFC;
-        }
-
-        private void GetMailFolders(string user, Socket client)
+        private void GetMailFolders(string user, Socket client)             // Response when client send LIST folders request
         {
             List<string> foldersOfClient = new List<string>();
             string inboxPathOfClient = clientsList[user].inboxPath;
@@ -176,8 +162,7 @@ namespace Project
             return;
         }
 
-
-        private void SelectFolder(string mess, Socket client)
+        private void SelectFolder(string mess, Socket client)               // Response when client send SELECT folder request
         {
             string[] words = mess.Split(delimiterChars);
 
@@ -199,7 +184,7 @@ namespace Project
             return;
         }
 
-        private void GetMailUID(string user, Socket client)
+        private void GetMailUID(string user, Socket client)                 // Response uid of mail when client send SEARCH mail in folder request
         {
             FileInfo[] fi = new FileInfo[100000];
             DirectoryInfo di = new DirectoryInfo(clientsList[user].selectFolderPath);
@@ -220,7 +205,7 @@ namespace Project
         }
 
 
-        private void FetchUID(string mess, Socket client)
+        private void FetchUID(string mess, Socket client)                   // Response content of mail when client send FETCH request
         {
             try
             {
@@ -243,6 +228,29 @@ namespace Project
                     sendMess(returnData, client);
                 }
                     
+            }
+            catch { }
+            return;
+        }
+
+        private void LogOutClient(string user, Socket client)               // Response when client send LOGOUT request
+        {
+            try
+            {
+                if (clientsList.Keys.ToList().IndexOf(user) != -1)
+                {
+                    string returnData = $"*BYE IMAP Server logging out\nS: {user} OK LOGOUT completed\n";
+                    sendMess(returnData, client);
+                    clientsList.Remove(user);
+                }
+                else
+                {
+                    string returnData = $"*A login form has been disconnected from server!!!\n";
+                    sendMess(returnData, client);
+                }
+                clientSocketList.Remove(client);
+                client.Shutdown(SocketShutdown.Both);
+                client.Disconnect(true);
             }
             catch { }
             return;
@@ -283,6 +291,8 @@ namespace Project
                         GetMailUID(words[0], client);
                     else if (text.Contains("uid fetch"))
                         FetchUID(text, client);
+                    else if (text.Contains("logout"))
+                        LogOutClient(words[0], client);
                 }
             }
             catch
@@ -291,6 +301,16 @@ namespace Project
                 client.Close();
             }
 
+        }
+
+        private void Server_Load(object sender, EventArgs e)
+        {
+            CheckForIllegalCrossThreadCalls = false;
+            Thread serverThread = new Thread(new ThreadStart(StartUnsafeThread));
+            serverThread.IsBackground = false;
+            serverThread.Start();
+            GetAccoutDB();
+            clientsList = new Dictionary<string, pathForClient>();
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
