@@ -16,7 +16,7 @@ namespace Project
 {
     public partial class ClientMail : Form
     {
-        const string IPADDRESS = "25.70.254.3";
+        const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
         char[] delimiterChars = { ' ', '-', '\n' };
         string serverResponse = null;
