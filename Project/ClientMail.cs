@@ -61,15 +61,18 @@ namespace Project
                     int index = readData.IndexOf($"\n{Login.user} OK SEARCH completed. (Success)");
                     int cutLenght= readData.Substring(index).Length;
                     int lengtOfNeed = readData.Length - cutLenght - 10;
-                    string uids = readData.Substring(9, lengtOfNeed);
-                   
-                    string[] words = uids.Split(delimiterChars);
-                    string mess = $"{Login.user} uid fetch ";
-                    foreach (var item in words)
+                    if (lengtOfNeed > 0)
                     {
-                        mess += item + " ";
+                        string uids = readData.Substring(9, lengtOfNeed);
+
+                        string[] words = uids.Split(delimiterChars);
+                        string mess = $"{Login.user} uid fetch ";
+                        foreach (var item in words)
+                        {
+                            mess += item + " ";
+                        }
+                        SendMess(mess + "\n");
                     }
-                    SendMess(mess + "\n");
                 }
                 else if (readData.Contains("-") && isMailSelected == 0) //List mail to list view
                 {
