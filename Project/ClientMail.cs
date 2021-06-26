@@ -25,9 +25,11 @@ namespace Project
         string selectedFolder;
         int numberOfMail = 0;
         int ismailselected = 0;
+        string search = "";
         public ClientMail()
         {
             InitializeComponent();
+            search = textBox1.Text;
         }
 
         private void msg()
@@ -38,6 +40,7 @@ namespace Project
             }
             else
             {
+                search = textBox1.Text;
                 if (readData.Contains("* LIST "))
                 {
                     readData = readData.Substring(7);
@@ -51,20 +54,57 @@ namespace Project
                     SendMess(mess);
                 }
                 else if (readData.Contains("* SEARCH"))
-                {
-                    int index = readData.IndexOf("\ntag OK SEARCH completed (Success)");
-                    string uids = readData.Substring(9, index);
-                    index = uids.IndexOf("\ntag");
-                    if (index > 0)
+                { 
+                    if (search.Contains("from "))
                     {
-                        uids = uids.Substring(0, index - 1);
-                        string[] words = uids.Split(delimiterChars);
-                        string mess = "tag uid fetch ";
-                        foreach (var item in words)
+                        textBox1.Text = "";
+                        readData = readData.Substring(9);
+
+                        string[] items = readData.Split(' ');
+
+                        if (items.Length == 1)
                         {
-                            mess += item + " ";
+                            listView2.Items.Clear();
+                            return;
                         }
-                        SendMess(mess + "\n");
+
+                        ListViewItem[] list = new ListViewItem[10000];
+
+                        int len = 0;
+
+                        for (int i = 0; i < listView2.Items.Count; i++)
+                        {
+                            for (int k = 0; k < items.Length; k++)
+                            {
+                                if (listView2.Items[i].SubItems[0].Text == items[k])
+                                {
+                                    list[len] = listView2.Items[i];
+                                    len++;
+                                }
+                            }
+                        }
+
+                        listView2.Items.Clear();
+
+                        for (int i = 0; i < len; i++)
+                            listView2.Items.Add(list[i]);
+                    }
+                    else
+                    {
+                        int index = readData.IndexOf("\ntag OK SEARCH completed (Success)");
+                        string uids = readData.Substring(9, index);
+                        index = uids.IndexOf("\ntag");
+                        if (index > 0)
+                        {
+                            uids = uids.Substring(0, index - 1);
+                            string[] words = uids.Split(delimiterChars);
+                            string mess = "tag uid fetch ";
+                            foreach (var item in words)
+                            {
+                                mess += item + " ";
+                            }
+                            SendMess(mess + "\n");
+                        }
                     }
                 }
                 else if (readData.Contains("-") && ismailselected == 0)
@@ -87,6 +127,39 @@ namespace Project
                     richTextBox1.Text += from + '\n' + subject + '\n' + date + '\n';
                     ismailselected = 0;
                 }
+               /* else if (readData.Contains(' '))
+                {
+                    readData = readData.Substring(9);
+
+                    string[] items = readData.Split(' ');
+
+                    if (items.Length == 1)
+                    {
+                        listView2.Items.Clear();
+                        return;
+                    }
+
+                    ListViewItem[] list = new ListViewItem[10000];
+
+                    int len = 0;
+
+                    for(int i = 0; i < listView2.Items.Count; i++)
+                    {
+                        for(int k = 0; k < items.Length; k++)
+                        {
+                            if(listView2.Items[i].SubItems[0].Text == items[k])
+                            {
+                                list[len] = listView2.Items[i];
+                                len++;
+                            }
+                        }
+                    }
+
+                    listView2.Items.Clear();
+
+                    for(int i = 0; i < len; i++)
+                        listView2.Items.Add(list[i]);
+                }*/
             }
         }
 
@@ -172,7 +245,6 @@ namespace Project
 
         private void button1_Click(object sender, EventArgs e)
         {
-            richTextBox1.Text = "";
             string mess = "tag search " + textBox1.Text + '\n';
             SendMess(mess);
         }

@@ -163,28 +163,20 @@ namespace Project
 
         private string[] ReadFiles(string word)
         {
-            string read = "";
             string[] uids = new string[10000];
             int i = 0;
-            string[] subpath = { "All mail", "Draft", "Flagged", "Important", "Sent", "Starred", "Trash" };
-            DirectoryInfo d = new DirectoryInfo(rootPath);
+            //string[] subpath = { "All mail", "Draft", "Flagged", "Important", "Sent", "Starred", "Trash" };
+            DirectoryInfo d = new DirectoryInfo(path);
             DirectoryInfo[] di = d.GetDirectories();
-            FileInfo[] subdi = new FileInfo[10000];
-            foreach (var item in di)
+            FileInfo[] subdi = d.GetFiles();
+            string cut = word;
+            foreach(var item in subdi)
             {
-                subdi = item.GetFiles();
-                foreach (var file in subdi)
-                {
-                    if (file.Name != null)
-                    {
-                        string c = word.Trim('\n');
-                        read = File.ReadLines(file.FullName).Skip(1).Take(1).First();
-                        if (c == read)
-                        {
-                            uids[i] = file.Name;
-                            i++;
-                        }
-                    }
+                string file = File.ReadLines(item.FullName).Skip(1).Take(1).First();
+                if (file == word)
+                { 
+                    uids[i] = item.Name;
+                    i++;
                 }
             }
             return uids;
@@ -194,17 +186,26 @@ namespace Project
             string cut = mess;
             string from = "";
             string[] uids = new string[100000];
-            if (mess.Contains("tag search from "))
+            if (mess.Contains("tag search from"))
             {
-                for(int i = 16; i < cut.Length; i++)
+                for(int i = 16; i < cut.Length - 1; i++)
                 {
                     from += cut[i]; 
                 }
                 uids = ReadFiles(from);
-                foreach(var item in uids)
+                string senddata = "* SEARCH ";
+                int k = 0;
+                while(uids[k] != null)
                 {
-                    sendMess(item, client);
+                    senddata += uids[k] + ' ';
+                    k++;
                 }
+
+                if (senddata != null)
+                    senddata += '\n';
+                    sendMess(senddata, client);
+
+                sendMess("tag OK SEARCH completed (Success)\n", client);
             }
 
             return;

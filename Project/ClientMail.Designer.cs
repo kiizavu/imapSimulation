@@ -108,9 +108,9 @@ namespace Project
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(894, 75);
+            this.richTextBox1.Location = new System.Drawing.Point(846, 18);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(287, 447);
+            this.richTextBox1.Size = new System.Drawing.Size(307, 410);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
             // 
@@ -130,14 +130,6 @@ namespace Project
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(225, 22);
             this.textBox1.TabIndex = 8;
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Location = new System.Drawing.Point(894, 75);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(287, 447);
-            this.richTextBox1.TabIndex = 6;
-            this.richTextBox1.Text = "";
             // 
             // ClientMail
             // 
