@@ -256,31 +256,31 @@ namespace Project
             return;
         }
 
-        void Create_Folder(string mess, Socket client)
+        private void CreateFolder(string mess, Socket client)
         {
-            if (mess.Contains("tag create"))
+            try
             {
-                try
-                {
-                    mess = mess.Substring(11);
-                    folders.Add(mess);
-                    Directory.CreateDirectory(rootPath + mess);
-                    sendMess("tag create OK\n", client);
-                }
-                catch { }
-                return;
-            }    
-            else if (!mess.Contains("tag create"))
-            {
-                return;
-            }    
+                string[] words = mess.Split(delimiterChars);
+                string inboxPath = clientsList[words[0]].inboxPath;
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+                List<string> folders = clientsList[words[0]].folders;
+
+                mess = words[2];
+                folders.Add(mess);
+                Directory.CreateDirectory(inboxPath + mess);
+                sendMess($"{words[0]} create OK\n", client);
+
+                UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
+            }
+            catch { }
+            return; 
         }
 
         //Copy mail
-        void Copy_Mail(string uid, string mailBox, string curMailBox)
+        private void Copy_Mail(string uid, string mailBox, string curFolder, string inboxPath)
         {
-            string sourcePath = rootPath + curMailBox;
-            string targetPath = rootPath + mailBox;
+            string sourcePath = inboxPath + curFolder;
+            string targetPath = inboxPath + mailBox;
             DirectoryInfo d = new DirectoryInfo(sourcePath);
             DirectoryInfo[] dir = d.GetDirectories();
             FileInfo[] fi = d.GetFiles();
@@ -288,40 +288,34 @@ namespace Project
             {
                 if (fi[i].Name.Contains(uid))
                 {
-                    string sourceFile = System.IO.Path.Combine(sourcePath, fi[i].Name);
-                    string destFile = System.IO.Path.Combine(targetPath, fi[i].Name);
+                    string sourceFile = Path.Combine(sourcePath, fi[i].Name);
+                    string destFile = Path.Combine(targetPath, fi[i].Name);
                     File.Copy(sourceFile, destFile, true);
                     break;
                 }
             }
         }
 
-        void CopyMail(string mess, Socket client)
+        private void CopyMail(string mess, Socket client)
         {
-            if (mess.Contains("tag copy"))
+            try
             {
-                try
-                {
-                    mess = mess.Substring(9);
-                    string[] tmp = mess.Split(' ', '\n');
-                    string curFolder = new DirectoryInfo(path).Name;
-                    Copy_Mail(tmp[0], tmp[1], curFolder);
-                    sendMess("tag copy OK\n", client);
-                }
-                catch { }
-                return;
+                string[] words = mess.Split(delimiterChars);
+                string inboxPath = clientsList[words[0]].inboxPath;
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+
+                string curFolder = new DirectoryInfo(selectFolderPath).Name;
+                Copy_Mail(words[2], words[3], curFolder, inboxPath);
+                sendMess($"{words[0]} copy OK\n", client);
             }
-            else if (!mess.Contains("tag copy"))
-            {
-                return;
-            }
+            catch { }
+            return;
         }
 
         //Delete mail
-        void Delete_Mail(string uid, string curMailBox)
+        private void Delete_Mail(string uid, string selectFolderPath)
         {
-            path = rootPath + curMailBox;
-            DirectoryInfo d = new DirectoryInfo(path);
+            DirectoryInfo d = new DirectoryInfo(selectFolderPath);
             DirectoryInfo[] dir = d.GetDirectories();
             FileInfo[] fi = d.GetFiles();
             for (int i = 0; i < fi.Length; ++i)
@@ -334,70 +328,59 @@ namespace Project
             }
         }
 
-        void DeleteMail(string mess, Socket client)
+        private void DeleteMail(string mess, Socket client)
         {
-            if (mess.Contains("tag store"))
+            try
             {
-                try
-                {
-                    mess = mess.Substring(10);
-                    string[] tmp = mess.Split(' ', '\n');
-                    string curFolder = new DirectoryInfo(path).Name;
-                    Delete_Mail(tmp[0], curFolder);
-                    sendMess("tag store OK\n", client);
-                }
-                catch { }
-                return;
+                string[] words = mess.Split(delimiterChars);
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+
+                Delete_Mail(words[2], selectFolderPath);
+                sendMess($"{words[0]} store OK\n", client);
             }
-            else if (!mess.Contains("tag store"))
-            {
-                return;
-            }
+            catch { }
+            return;
         }
 
-        void DeleteFol(string mess, Socket client)
+        private void DeleteFol(string mess, Socket client)
         {
-            if (mess.Contains("tag delete"))
+            try
             {
-                try
-                {
-                    Directory.Delete(path, true);
-                    sendMess("tag delete OK\n", client);
-                }
-                catch { }
-                return;
+                string[] words = mess.Split(delimiterChars);
+                string inboxPath = clientsList[words[0]].inboxPath;
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+                List<string> folders = clientsList[words[0]].folders;
+
+                Directory.Delete(selectFolderPath, true);
+                sendMess($"{words[0]} delete OK\n", client);
+
+                UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
             }
-            else if (!mess.Contains("tag delete"))
-            {
-                return;
-            }
+            catch { }
+            return;
         }
 
-        void Relocate_Mail(string uid, string mailBox, string curMailBox)
+        private void Relocate_Mail(string uid, string mailBox, string curFolder, string inboxPath)
         {
-            Copy_Mail(uid, mailBox, curMailBox);
-            Delete_Mail(uid, curMailBox);
+            Copy_Mail(uid, mailBox, curFolder, inboxPath);
+            Delete_Mail(uid, curFolder);
         }
 
-        void RelocateMail(string mess, Socket client)
+        private void RelocateMail(string mess, Socket client)
         {
-            if (mess.Contains("tag move"))
+            try
             {
-                try
-                {
-                    mess = mess.Substring(9);
-                    string[] tmp = mess.Split(' ', '\n');
-                    string curFolder = new DirectoryInfo(path).Name;
-                    Relocate_Mail(tmp[0], tmp[1], curFolder);
-                    sendMess("tag move OK\n", client);
-                }
-                catch { }
-                return;
+                string[] words = mess.Split(delimiterChars);
+                string inboxPath = clientsList[words[0]].inboxPath;
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+                List<string> folders = clientsList[words[0]].folders;
+
+                string curFolder = new DirectoryInfo(selectFolderPath).Name;
+                Relocate_Mail(words[2], words[3], curFolder, inboxPath);
+                sendMess($"{words[0]} move OK\n", client);
             }
-            else if (!mess.Contains("tag mnove"))
-            {
-                return;
-            }
+            catch { }
+            return;
         }
         // Nhan message tu client
         void getMess(object obj)
@@ -434,6 +417,16 @@ namespace Project
                         GetMailUID(words[0], client);
                     else if (text.Contains("uid fetch"))
                         FetchUID(text, client);
+                    else if (text.Contains("create"))
+                        CreateFolder(text, client);
+                    else if (text.Contains("copy"))
+                        CopyMail(text, client);
+                    else if (text.Contains("store"))
+                        DeleteMail(text, client);
+                    else if (text.Contains("delete"))
+                        DeleteFol(text, client);
+                    else if (text.Contains("move"))
+                        RelocateMail(text, client);
                     else if (text.Contains("logout"))
                         LogOutClient(words[0], client);
                 }
