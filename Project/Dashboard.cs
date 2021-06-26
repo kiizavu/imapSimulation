@@ -35,5 +35,11 @@ namespace Project
             ClientMail cm = new ClientMail();
             cm.Show();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Terminal terminal = new Terminal();
+            terminal.Show();
+        }
     }
 }
