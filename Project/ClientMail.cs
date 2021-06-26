@@ -16,7 +16,7 @@ namespace Project
 {
     public partial class ClientMail : Form
     {
-        const string IPADDRESS = "25.70.254.3";
+        const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
         char[] delimiterChars = { ' ', '-', '\n' };
         string serverResponse = null;
@@ -210,7 +210,7 @@ namespace Project
         private void DeleteBtn_Click(object sender, EventArgs e)
         {
             string selected = listView2.SelectedItems[0].Text;
-            string command = $"{Login.user} store " + selected + @" +flags (\Delete)\n";
+            string command = $"{Login.user} store " + selected + @" +flags (\Delete)" + "\n";
             SendMess(command);
         }
 
@@ -220,18 +220,11 @@ namespace Project
             SendMess(command);
         }
 
-        //1 click đọc mail
+        //right click để thao tác
         private void Mouse_Click(object sender, MouseEventArgs e)
         {
             bool match = false;
-            if (e.Button == MouseButtons.Left)
-            {
-                isMailSelected = 1;
-                string mailselected = listView2.SelectedItems[0].Text;
-                string mess = $"{Login.user} uid fetch " + mailselected + '\n';
-                SendMess(mess);
-            }
-            else if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                 foreach (ListViewItem item in listView2.Items)
                 {
@@ -247,20 +240,6 @@ namespace Project
                     listView2.ContextMenuStrip.Show(listView2, new Point(e.X, e.Y));
                 }
             }    
-        }
-
-        //1 click hiện danh sách mail trong folder
-        private void Mouse_Click1(object sender, MouseEventArgs e)
-        {
-            listView2.Items.Clear();
-            try
-            {
-                selectedFolder = listView1.SelectedItems[0].Text;
-                string mess = $"{Login.user} select \"" + selectedFolder + "\"\n";
-                SendMess(mess);
-            }
-            catch
-            { }
         }
 
         //Làm sạch giao diện

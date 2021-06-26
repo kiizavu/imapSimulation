@@ -16,7 +16,7 @@ namespace Project
 {
     public partial class Server : Form
     {
-        const string IPADDRESS = "25.70.254.3";
+        const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
         static string rootPath = Path.GetDirectoryName(Application.ExecutablePath);
         static string accountDBPath = rootPath + @"/db.csv";
@@ -363,7 +363,8 @@ namespace Project
         private void Relocate_Mail(string uid, string mailBox, string curFolder, string inboxPath)
         {
             Copy_Mail(uid, mailBox, curFolder, inboxPath);
-            Delete_Mail(uid, curFolder);
+            string path = inboxPath + curFolder;
+            Delete_Mail(uid, path);
         }
 
         private void RelocateMail(string mess, Socket client)

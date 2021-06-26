@@ -65,15 +65,14 @@ namespace Project
             this.listView1.ContextMenuStrip = this.contextMenuStrip2;
             this.listView1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(9, 55);
-            this.listView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listView1.Location = new System.Drawing.Point(12, 68);
+            this.listView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(128, 370);
+            this.listView1.Size = new System.Drawing.Size(169, 454);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
             this.listView1.ItemActivate += new System.EventHandler(this.listView1_ItemActivate);
-            this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Mouse_Click1);
             // 
             // contextMenuStrip2
             // 
@@ -82,19 +81,19 @@ namespace Project
             this.deleteCurrentFolderToolStripMenuItem,
             this.createFolderToolStripMenuItem});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(187, 48);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(221, 52);
             // 
             // deleteCurrentFolderToolStripMenuItem
             // 
             this.deleteCurrentFolderToolStripMenuItem.Name = "deleteCurrentFolderToolStripMenuItem";
-            this.deleteCurrentFolderToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.deleteCurrentFolderToolStripMenuItem.Size = new System.Drawing.Size(220, 24);
             this.deleteCurrentFolderToolStripMenuItem.Text = "Delete Current Folder";
             this.deleteCurrentFolderToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentFolderToolStripMenuItem_Click);
             // 
             // createFolderToolStripMenuItem
             // 
             this.createFolderToolStripMenuItem.Name = "createFolderToolStripMenuItem";
-            this.createFolderToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.createFolderToolStripMenuItem.Size = new System.Drawing.Size(220, 24);
             this.createFolderToolStripMenuItem.Text = "Create Folder";
             this.createFolderToolStripMenuItem.Click += new System.EventHandler(this.createFolderToolStripMenuItem_Click_1);
             // 
@@ -103,10 +102,9 @@ namespace Project
             this.label3.AutoSize = true;
             this.label3.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(9, 32);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Location = new System.Drawing.Point(12, 39);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(0, 20);
+            this.label3.Size = new System.Drawing.Size(0, 25);
             this.label3.TabIndex = 4;
             // 
             // listView2
@@ -120,10 +118,10 @@ namespace Project
             this.listView2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listView2.FullRowSelect = true;
             this.listView2.HideSelection = false;
-            this.listView2.Location = new System.Drawing.Point(153, 55);
-            this.listView2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listView2.Location = new System.Drawing.Point(204, 68);
+            this.listView2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(610, 370);
+            this.listView2.Size = new System.Drawing.Size(812, 454);
             this.listView2.TabIndex = 5;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -152,19 +150,20 @@ namespace Project
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(768, 55);
+            this.richTextBox1.Location = new System.Drawing.Point(1024, 68);
+            this.richTextBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(389, 370);
+            this.richTextBox1.Size = new System.Drawing.Size(517, 454);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
             // 
             // CreateBtn
             // 
             this.CreateBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CreateBtn.Location = new System.Drawing.Point(153, 18);
-            this.CreateBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CreateBtn.Location = new System.Drawing.Point(204, 22);
+            this.CreateBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CreateBtn.Name = "CreateBtn";
-            this.CreateBtn.Size = new System.Drawing.Size(70, 26);
+            this.CreateBtn.Size = new System.Drawing.Size(93, 32);
             this.CreateBtn.TabIndex = 8;
             this.CreateBtn.Text = "Tạo";
             this.CreateBtn.UseVisualStyleBackColor = true;
@@ -174,10 +173,10 @@ namespace Project
             // textBox2
             // 
             this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(553, 27);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox2.Location = new System.Drawing.Point(737, 33);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(210, 23);
+            this.textBox2.Size = new System.Drawing.Size(279, 27);
             this.textBox2.TabIndex = 16;
             this.textBox2.Visible = false;
             // 
@@ -185,10 +184,9 @@ namespace Project
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(248, 28);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(331, 34);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(46, 17);
+            this.label1.Size = new System.Drawing.Size(53, 20);
             this.label1.TabIndex = 19;
             this.label1.Text = "label1";
             this.label1.Visible = false;
@@ -199,19 +197,19 @@ namespace Project
             this.mailToolStripMenuItem1,
             this.mailboxToolStripMenuItem1});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // mailToolStripMenuItem1
             // 
             this.mailToolStripMenuItem1.Name = "mailToolStripMenuItem1";
-            this.mailToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
+            this.mailToolStripMenuItem1.Size = new System.Drawing.Size(146, 26);
             this.mailToolStripMenuItem1.Text = "Mail";
             // 
             // mailboxToolStripMenuItem1
             // 
             this.mailboxToolStripMenuItem1.Name = "mailboxToolStripMenuItem1";
-            this.mailboxToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
+            this.mailboxToolStripMenuItem1.Size = new System.Drawing.Size(146, 26);
             this.mailboxToolStripMenuItem1.Text = "Mailbox";
             // 
             // menuStrip1
@@ -221,8 +219,8 @@ namespace Project
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1165, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1553, 28);
             this.menuStrip1.TabIndex = 18;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -234,34 +232,35 @@ namespace Project
             this.deleteToolStripMenuItem1,
             this.chuyểnToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(116, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(127, 76);
             // 
             // copyToolStripMenuItem1
             // 
             this.copyToolStripMenuItem1.Name = "copyToolStripMenuItem1";
-            this.copyToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.copyToolStripMenuItem1.Size = new System.Drawing.Size(126, 24);
             this.copyToolStripMenuItem1.Text = "Copy";
             this.copyToolStripMenuItem1.MouseHover += new System.EventHandler(this.copyToolStripMenuItem1_MouseHover);
             // 
             // deleteToolStripMenuItem1
             // 
             this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
-            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(126, 24);
             this.deleteToolStripMenuItem1.Text = "Delete";
             this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem1_Click);
             // 
             // chuyểnToolStripMenuItem
             // 
             this.chuyểnToolStripMenuItem.Name = "chuyểnToolStripMenuItem";
-            this.chuyểnToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.chuyểnToolStripMenuItem.Size = new System.Drawing.Size(126, 24);
             this.chuyểnToolStripMenuItem.Text = "Chuyển";
             this.chuyểnToolStripMenuItem.MouseHover += new System.EventHandler(this.chuyểnToolStripMenuItem_MouseHover);
             // 
             // btnLogOut
             // 
-            this.btnLogOut.Location = new System.Drawing.Point(1056, 21);
+            this.btnLogOut.Location = new System.Drawing.Point(1408, 26);
+            this.btnLogOut.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnLogOut.Name = "btnLogOut";
-            this.btnLogOut.Size = new System.Drawing.Size(75, 23);
+            this.btnLogOut.Size = new System.Drawing.Size(100, 28);
             this.btnLogOut.TabIndex = 20;
             this.btnLogOut.Text = "Log Out";
             this.btnLogOut.UseVisualStyleBackColor = true;
@@ -269,9 +268,9 @@ namespace Project
             // 
             // ClientMail
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1165, 440);
+            this.ClientSize = new System.Drawing.Size(1553, 542);
             this.Controls.Add(this.btnLogOut);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox2);
@@ -282,7 +281,7 @@ namespace Project
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "ClientMail";
             this.Text = "ClientMail";
             this.Load += new System.EventHandler(this.ClientMail_Load);

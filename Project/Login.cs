@@ -16,7 +16,7 @@ namespace Project
 {
     public partial class Login : Form
     {
-        const string IPADDRESS = "25.70.254.3";
+        const string IPADDRESS = "127.0.0.1";
         const int PORT = 8080;
         public static string user;
         string serverResponse = null;
