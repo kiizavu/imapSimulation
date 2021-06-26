@@ -46,8 +46,10 @@ namespace Project
                 if (serverResponse.Contains("* LIST "))                                                      // List folder
                 {
                     serverResponse = serverResponse.Substring(7);
-                    string[] folder = serverResponse.Split(new[] { "* LIST " }, StringSplitOptions.None);
-                    listView1.Items.Add(folder[0]);
+                    string[] folder = serverResponse.Split(new[] { "* LIST ", "\n" }, StringSplitOptions.None);
+                    foreach (var item in folder)
+                        if (!item.Contains("(Success)") && !item.Contains("\0") && item != "")
+                            listView1.Items.Add(item);
                 }
                 else if (serverResponse.Contains($"{Login.user} OK {selectedFolder} selected. (Success)"))  // Select folder
                 {
