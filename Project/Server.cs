@@ -227,7 +227,7 @@ namespace Project
                 string[] words = mess.Split(delimiterChars);
 
                 string selectFolderPath = clientsList[words[0]].selectFolderPath;
-                mess = mess.Substring(14);
+                mess = mess.Substring(11 + words[0].Length);
                 string[] uids = mess.Split(delimiterChars);
                 foreach (var item in uids)
                 {
