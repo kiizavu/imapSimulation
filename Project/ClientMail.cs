@@ -31,10 +31,8 @@ namespace Project
         public ClientMail()
         {
             InitializeComponent();
-            (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItemClicked +=
-                    new ToolStripItemClickedEventHandler(copy);
-            (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItemClicked +=
-                    new ToolStripItemClickedEventHandler(move);
+            (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItemClicked += new ToolStripItemClickedEventHandler(copy);
+            (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItemClicked += new ToolStripItemClickedEventHandler(move);
         }
 
         private void msg()
@@ -102,22 +100,22 @@ namespace Project
                     this.log.Visible = true;
                     this.Close();
                 }
-                else if (readData.Contains("tag delete OK"))
+                else if (serverResponse.Contains($"{Login.user} delete OK"))                                // Delete folder
                 {
                     listView1.Items.Clear();
-                    string mess = "tag list" + "\n";
+                    string mess = $"{Login.user} list\n";
                     SendMess(mess);
                 }    
-                else if (readData.Contains("tag create OK"))
+                else if (serverResponse.Contains($"{Login.user} create OK"))                                // Create folder
                 {
                     listView1.Items.Clear();
-                    string mess = "tag list" + "\n";
+                    string mess = $"{Login.user} list\n";
                     SendMess(mess);
                 }    
-                else if (readData.Contains("tag store OK") || readData.Contains("tag move OK"))
+                else if (serverResponse.Contains($"{Login.user} store OK") || serverResponse.Contains($"{Login.user} move OK"))
                 {
                     listView2.Items.Clear();
-                    string mess = "tag select " + "'" + selectedFolder + "'" + "\n";
+                    string mess = $"{Login.user} select \"" + selectedFolder + "\"\n";
                     SendMess(mess);
                 }
             }
@@ -175,11 +173,11 @@ namespace Project
 
             Thread.Sleep(100);
             listView1.Items.Clear();
-            string mess = $"{Login.user} list" + "\n";
+            string mess = $"{Login.user} list\n";
             SendMess(mess);
 
             selectedFolder = "All mail";
-            mess = $"{Login.user} select " + "\"" + selectedFolder + "\"" + "\n";
+            mess = $"{Login.user} select \"" + selectedFolder + "\"\n";
             SendMess(mess);
         }
 
@@ -187,7 +185,7 @@ namespace Project
         {
             listView2.Items.Clear();
             selectedFolder = listView1.SelectedItems[0].Text;
-            string mess = $"{Login.user} select " + "\"" + selectedFolder + "\"" + "\n";
+            string mess = $"{Login.user} select \"" + selectedFolder + "\"\n";
             SendMess(mess);
         }
 
@@ -197,6 +195,17 @@ namespace Project
             string mailselected = listView2.SelectedItems[0].Text;
             string mess = $"{Login.user} uid fetch " + mailselected + '\n';
             SendMess(mess);
+        }
+
+        private void btnLogOut_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure ?", "Log out", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                string mess = $"{Login.user} logout\n";
+                SendMess(mess);
+            }
         }
 
         private void btnLogOut_Click(object sender, EventArgs e)

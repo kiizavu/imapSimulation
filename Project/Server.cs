@@ -291,6 +291,16 @@ namespace Project
                         GetMailUID(words[0], client);
                     else if (text.Contains("uid fetch"))
                         FetchUID(text, client);
+                    else if (text.Contains("create"))
+                        CreateFolder(text, client);
+                    else if (text.Contains("copy"))
+                        CopyMail(text, client);
+                    else if (text.Contains("store"))
+                        DeleteMail(text, client);
+                    else if (text.Contains("delete"))
+                        DeleteFol(text, client);
+                    else if (text.Contains("move"))
+                        RelocateMail(text, client);
                     else if (text.Contains("logout"))
                         LogOutClient(words[0], client);
                 }
