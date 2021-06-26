@@ -83,25 +83,28 @@ namespace Project
             richTextBox1.Text += s;
         }
 
-        string rootPath = Path.GetDirectoryName(Application.ExecutablePath) + @"/Inbox/";
+        string rootPath = Path.GetDirectoryName(Application.ExecutablePath) + @"/INBOX/";
         string path = null;
+        List<string> folders;
 
-
-        private void GetMailFoldder(string mess, Socket client)
+        private void GetMailFolders(string mess, Socket client)
         {
             if (mess.Contains("tag list"))
             {
+                folders = new List<string>();
                 DirectoryInfo DI = new DirectoryInfo(rootPath);
                 DirectoryInfo[] directories = DI.GetDirectories();
 
                 //duyet folder
+
                 foreach (var item in directories)
                 {
                     sendMess($"* LIST {item.Name}\n", client);
+                    folders.Add(item.Name);
                 }
                 return;
             }
-            else if (!mess.Contains("tag list"))
+            else if(!mess.Contains("tag list"))
             {
                 return;
             }
@@ -111,15 +114,14 @@ namespace Project
         //phan hoi tu server
         private void StatusResponse(string mess, Socket client)
         {
-            string[] subpath = { "All mail", "Draft", "Flagged", "Important", "Sent", "Starred", "Trash" };
             if (mess.Contains("tag select"))
                 {
-                for(int i = 0; i < subpath.Length; i++)
+                foreach (var item in folders)
                 {
-                    if (mess.Contains(subpath[i]))
+                    if (mess.Contains(item))
                     {
-                        path = rootPath + subpath[i];
-                        sendMess($"tag OK [READ-WRITE] {subpath[i]} selected. (Success)\n", client);
+                        path = rootPath + item;
+                        sendMess($"tag OK {item} selected. (Success)\n", client);
                         return;
                     }
                 }
@@ -157,9 +159,7 @@ namespace Project
             {
                 return;
             }
-            
         }
-
 
         private void FetchUID(string mess, Socket client)
         {
@@ -186,9 +186,151 @@ namespace Project
             {
                 return;
             }
-
         }
 
+        void Create_Folder(string mess, Socket client)
+        {
+            if (mess.Contains("tag create"))
+            {
+                try
+                {
+                    mess = mess.Substring(11);
+                    folders.Add(mess);
+                    Directory.CreateDirectory(rootPath + mess);
+                    sendMess("tag create OK\n", client);
+                }
+                catch { }
+                return;
+            }    
+            else if (!mess.Contains("tag create"))
+            {
+                return;
+            }    
+        }
+
+        //Copy mail
+        void Copy_Mail(string uid, string mailBox, string curMailBox)
+        {
+            string sourcePath = rootPath + curMailBox;
+            string targetPath = rootPath + mailBox;
+            DirectoryInfo d = new DirectoryInfo(sourcePath);
+            DirectoryInfo[] dir = d.GetDirectories();
+            FileInfo[] fi = d.GetFiles();
+            for (int i = 0; i < fi.Length; ++i)
+            {
+                if (fi[i].Name.Contains(uid))
+                {
+                    string sourceFile = System.IO.Path.Combine(sourcePath, fi[i].Name);
+                    string destFile = System.IO.Path.Combine(targetPath, fi[i].Name);
+                    File.Copy(sourceFile, destFile, true);
+                    break;
+                }
+            }
+        }
+
+        void CopyMail(string mess, Socket client)
+        {
+            if (mess.Contains("tag copy"))
+            {
+                try
+                {
+                    mess = mess.Substring(9);
+                    string[] tmp = mess.Split(' ', '\n');
+                    string curFolder = new DirectoryInfo(path).Name;
+                    Copy_Mail(tmp[0], tmp[1], curFolder);
+                    sendMess("tag copy OK\n", client);
+                }
+                catch { }
+                return;
+            }
+            else if (!mess.Contains("tag copy"))
+            {
+                return;
+            }
+        }
+
+        //Delete mail
+        void Delete_Mail(string uid, string curMailBox)
+        {
+            path = rootPath + curMailBox;
+            DirectoryInfo d = new DirectoryInfo(path);
+            DirectoryInfo[] dir = d.GetDirectories();
+            FileInfo[] fi = d.GetFiles();
+            for (int i = 0; i < fi.Length; ++i)
+            {
+                if (fi[i].Name.Contains(uid))
+                {
+                    File.Delete(fi[i].FullName);
+                    break;
+                }
+            }
+        }
+
+        void DeleteMail(string mess, Socket client)
+        {
+            if (mess.Contains("tag store"))
+            {
+                try
+                {
+                    mess = mess.Substring(10);
+                    string[] tmp = mess.Split(' ', '\n');
+                    string curFolder = new DirectoryInfo(path).Name;
+                    Delete_Mail(tmp[0], curFolder);
+                    sendMess("tag store OK\n", client);
+                }
+                catch { }
+                return;
+            }
+            else if (!mess.Contains("tag store"))
+            {
+                return;
+            }
+        }
+
+        void DeleteFol(string mess, Socket client)
+        {
+            if (mess.Contains("tag delete"))
+            {
+                try
+                {
+                    Directory.Delete(path, true);
+                    sendMess("tag delete OK\n", client);
+                }
+                catch { }
+                return;
+            }
+            else if (!mess.Contains("tag delete"))
+            {
+                return;
+            }
+        }
+
+        void Relocate_Mail(string uid, string mailBox, string curMailBox)
+        {
+            Copy_Mail(uid, mailBox, curMailBox);
+            Delete_Mail(uid, curMailBox);
+        }
+
+        void RelocateMail(string mess, Socket client)
+        {
+            if (mess.Contains("tag move"))
+            {
+                try
+                {
+                    mess = mess.Substring(9);
+                    string[] tmp = mess.Split(' ', '\n');
+                    string curFolder = new DirectoryInfo(path).Name;
+                    Relocate_Mail(tmp[0], tmp[1], curFolder);
+                    sendMess("tag move OK\n", client);
+                }
+                catch { }
+                return;
+            }
+            else if (!mess.Contains("tag mnove"))
+            {
+                return;
+            }
+        }
         // Nhan message tu client
         void getMess(object obj)
         {
@@ -210,11 +352,15 @@ namespace Project
                     } while (text[text.Length - 1] != '\n');
 
                     richTextBox1.Text += endPoint + ": " + text;
-                    GetMailFoldder(text, client);
+                    GetMailFolders(text, client);
                     StatusResponse(text, client);
                     GetMailUID(text, client);
                     FetchUID(text, client);
-
+                    Create_Folder(text, client);
+                    CopyMail(text, client);
+                    DeleteMail(text, client);
+                    DeleteFol(text, client);
+                    RelocateMail(text, client);
                 }
             }
             catch
@@ -222,7 +368,6 @@ namespace Project
                 clientSocketList.Remove(client);
                 client.Close();
             }
-
         }
     }
 }
