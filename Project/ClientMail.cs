@@ -179,6 +179,7 @@ namespace Project
             string mess = $"{Login.user} list\n";
             SendMess(mess);
 
+            //load all mail folder when start
             selectedFolder = "All mail";
             mess = $"{Login.user} select \"" + selectedFolder + "\"\n";
             SendMess(mess);
