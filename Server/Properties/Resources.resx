@@ -124,10 +124,13 @@
   <data name="dry-clean" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dry-clean.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="dry-clean (2)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\dry-clean (2).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="dry-clean (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dry-clean (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dry-clean (2)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dry-clean (2).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="power (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\power (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
