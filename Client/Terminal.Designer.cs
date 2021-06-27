@@ -30,6 +30,7 @@ namespace Client
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Terminal));
             this.rtbCommunication = new System.Windows.Forms.RichTextBox();
             this.tbRequest = new System.Windows.Forms.TextBox();
             this.bunifuElipse1 = new Bunifu.Framework.UI.BunifuElipse(this.components);
@@ -137,6 +138,7 @@ namespace Client
             this.Controls.Add(this.tbRequest);
             this.Controls.Add(this.rtbCommunication);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Terminal";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Terminal";
