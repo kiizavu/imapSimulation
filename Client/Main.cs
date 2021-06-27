@@ -26,8 +26,6 @@ namespace Client
 
         private Color inactiveColor = Color.FromArgb(22, 25, 28);
 
-        const string IPADDRESS = "127.0.0.1";
-        const int PORT = 8080;
         char[] delimiterChars = { ' ', '-', '\n' };
         string serverResponse = null;
         string selectedFolder;
@@ -35,6 +33,7 @@ namespace Client
         public int isMailSelected = 0;
 
         public Login log { get; set; }
+        public Dasboard dasboard { get; set; }
         TcpClient tcpClient = new TcpClient();
         NetworkStream ns = default(NetworkStream);
         List<MailItem> mailItems;
@@ -186,8 +185,8 @@ namespace Client
         private void Main_Load(object sender, EventArgs e)
         {
             //connect to server
-            IPAddress ipAddress = IPAddress.Parse(IPADDRESS);
-            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, PORT);
+            IPAddress ipAddress = IPAddress.Parse(Dasboard.IPADDRESS);
+            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, Dasboard.PORT);
             try
             {
                 tcpClient.Connect(iPEndPoint);

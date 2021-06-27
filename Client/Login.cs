@@ -16,16 +16,14 @@ namespace Client
 {
     public partial class Login : Form
     {
-
         int mov;
         int movX;
         int movY;
 
-        const string IPADDRESS = "127.0.0.1";
-        const int PORT = 8080;
         public static string user;
         string serverResponse = null;
 
+        public Dasboard dasboard { get; set; }
         TcpClient tcpClient = new TcpClient();
         NetworkStream ns = default(NetworkStream);
 
@@ -90,8 +88,8 @@ namespace Client
         //Form load
         private void Login_Load(object sender, EventArgs e)
         {
-            IPAddress ipAddress = IPAddress.Parse(IPADDRESS);
-            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, PORT);
+            IPAddress ipAddress = IPAddress.Parse(Dasboard.IPADDRESS);
+            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, Dasboard.PORT);
             try
             {
                 tcpClient.Connect(iPEndPoint);
