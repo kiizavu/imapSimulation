@@ -107,9 +107,9 @@ namespace Client
             this.bunifuSeparator1.BackColor = System.Drawing.Color.Transparent;
             this.bunifuSeparator1.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.bunifuSeparator1.LineThickness = 1;
-            this.bunifuSeparator1.Location = new System.Drawing.Point(263, 82);
+            this.bunifuSeparator1.Location = new System.Drawing.Point(37, 85);
             this.bunifuSeparator1.Name = "bunifuSeparator1";
-            this.bunifuSeparator1.Size = new System.Drawing.Size(232, 10);
+            this.bunifuSeparator1.Size = new System.Drawing.Size(458, 1);
             this.bunifuSeparator1.TabIndex = 8;
             this.bunifuSeparator1.Transparency = 255;
             this.bunifuSeparator1.Vertical = false;
@@ -119,9 +119,9 @@ namespace Client
             this.bunifuSeparator2.BackColor = System.Drawing.Color.Transparent;
             this.bunifuSeparator2.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.bunifuSeparator2.LineThickness = 1;
-            this.bunifuSeparator2.Location = new System.Drawing.Point(94, 127);
+            this.bunifuSeparator2.Location = new System.Drawing.Point(37, 130);
             this.bunifuSeparator2.Name = "bunifuSeparator2";
-            this.bunifuSeparator2.Size = new System.Drawing.Size(138, 10);
+            this.bunifuSeparator2.Size = new System.Drawing.Size(195, 1);
             this.bunifuSeparator2.TabIndex = 9;
             this.bunifuSeparator2.Transparency = 255;
             this.bunifuSeparator2.Vertical = false;
@@ -131,7 +131,7 @@ namespace Client
             this.bunifuImageButton2.BackColor = System.Drawing.Color.Transparent;
             this.bunifuImageButton2.Image = global::Client.Properties.Resources.desktop_computer;
             this.bunifuImageButton2.ImageActive = null;
-            this.bunifuImageButton2.Location = new System.Drawing.Point(463, 173);
+            this.bunifuImageButton2.Location = new System.Drawing.Point(444, 173);
             this.bunifuImageButton2.Name = "bunifuImageButton2";
             this.bunifuImageButton2.Size = new System.Drawing.Size(150, 150);
             this.bunifuImageButton2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -186,7 +186,7 @@ namespace Client
             this.bunifuImageButton1.BackColor = System.Drawing.Color.Transparent;
             this.bunifuImageButton1.Image = global::Client.Properties.Resources.terminal;
             this.bunifuImageButton1.ImageActive = null;
-            this.bunifuImageButton1.Location = new System.Drawing.Point(107, 173);
+            this.bunifuImageButton1.Location = new System.Drawing.Point(117, 173);
             this.bunifuImageButton1.Name = "bunifuImageButton1";
             this.bunifuImageButton1.Size = new System.Drawing.Size(150, 150);
             this.bunifuImageButton1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -201,6 +201,8 @@ namespace Client
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DimGray;
             this.ClientSize = new System.Drawing.Size(704, 369);
+            this.Controls.Add(this.bunifuSeparator2);
+            this.Controls.Add(this.bunifuSeparator1);
             this.Controls.Add(this.bunifuImageButton2);
             this.Controls.Add(this.btnMinimize);
             this.Controls.Add(this.bunifuImageButton3);
@@ -210,8 +212,6 @@ namespace Client
             this.Controls.Add(this.tbPort);
             this.Controls.Add(this.tbIPAddress);
             this.Controls.Add(this.bunifuImageButton1);
-            this.Controls.Add(this.bunifuSeparator1);
-            this.Controls.Add(this.bunifuSeparator2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Dasboard";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

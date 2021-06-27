@@ -39,6 +39,8 @@ namespace Server
             this.bunifuImageButton3 = new Bunifu.Framework.UI.BunifuImageButton();
             this.btnClose = new Bunifu.Framework.UI.BunifuImageButton();
             this.bunifuImageButton1 = new Bunifu.Framework.UI.BunifuImageButton();
+            this.bunifuSeparator1 = new Bunifu.Framework.UI.BunifuSeparator();
+            this.bunifuSeparator2 = new Bunifu.Framework.UI.BunifuSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.btnMinimize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnClose)).BeginInit();
@@ -47,24 +49,28 @@ namespace Server
             // 
             // bunifuElipse1
             // 
-            this.bunifuElipse1.ElipseRadius = 7;
+            this.bunifuElipse1.ElipseRadius = 17;
             this.bunifuElipse1.TargetControl = this;
             // 
             // tbIPAddress
             // 
+            this.tbIPAddress.BackColor = System.Drawing.SystemColors.Control;
+            this.tbIPAddress.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tbIPAddress.Font = new System.Drawing.Font("Times New Roman", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbIPAddress.Location = new System.Drawing.Point(183, 54);
+            this.tbIPAddress.Location = new System.Drawing.Point(183, 57);
             this.tbIPAddress.Name = "tbIPAddress";
-            this.tbIPAddress.Size = new System.Drawing.Size(232, 39);
+            this.tbIPAddress.Size = new System.Drawing.Size(232, 32);
             this.tbIPAddress.TabIndex = 0;
             this.tbIPAddress.Text = "127.0.0.1";
             // 
             // tbPort
             // 
+            this.tbPort.BackColor = System.Drawing.SystemColors.Control;
+            this.tbPort.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tbPort.Font = new System.Drawing.Font("Times New Roman", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbPort.Location = new System.Drawing.Point(523, 54);
+            this.tbPort.Location = new System.Drawing.Point(523, 57);
             this.tbPort.Name = "tbPort";
-            this.tbPort.Size = new System.Drawing.Size(129, 39);
+            this.tbPort.Size = new System.Drawing.Size(129, 32);
             this.tbPort.TabIndex = 1;
             this.tbPort.Text = "8080";
             // 
@@ -133,7 +139,7 @@ namespace Server
             // 
             this.bunifuImageButton1.BackColor = System.Drawing.Color.Transparent;
             this.bunifuImageButton1.Image = global::Server.Properties.Resources.power;
-            this.bunifuImageButton1.ImageActive = null;
+            this.bunifuImageButton1.ImageActive = global::Server.Properties.Resources.power__1_;
             this.bunifuImageButton1.Location = new System.Drawing.Point(266, 132);
             this.bunifuImageButton1.Name = "bunifuImageButton1";
             this.bunifuImageButton1.Size = new System.Drawing.Size(200, 200);
@@ -143,11 +149,37 @@ namespace Server
             this.bunifuImageButton1.Zoom = 10;
             this.bunifuImageButton1.Click += new System.EventHandler(this.bunifuImageButton1_Click);
             // 
+            // bunifuSeparator1
+            // 
+            this.bunifuSeparator1.BackColor = System.Drawing.Color.Transparent;
+            this.bunifuSeparator1.LineColor = System.Drawing.Color.Black;
+            this.bunifuSeparator1.LineThickness = 1;
+            this.bunifuSeparator1.Location = new System.Drawing.Point(47, 85);
+            this.bunifuSeparator1.Name = "bunifuSeparator1";
+            this.bunifuSeparator1.Size = new System.Drawing.Size(368, 1);
+            this.bunifuSeparator1.TabIndex = 8;
+            this.bunifuSeparator1.Transparency = 255;
+            this.bunifuSeparator1.Vertical = false;
+            // 
+            // bunifuSeparator2
+            // 
+            this.bunifuSeparator2.BackColor = System.Drawing.Color.Transparent;
+            this.bunifuSeparator2.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.bunifuSeparator2.LineThickness = 1;
+            this.bunifuSeparator2.Location = new System.Drawing.Point(457, 85);
+            this.bunifuSeparator2.Name = "bunifuSeparator2";
+            this.bunifuSeparator2.Size = new System.Drawing.Size(211, 1);
+            this.bunifuSeparator2.TabIndex = 9;
+            this.bunifuSeparator2.Transparency = 255;
+            this.bunifuSeparator2.Vertical = false;
+            // 
             // Dasboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(704, 369);
+            this.Controls.Add(this.bunifuSeparator2);
+            this.Controls.Add(this.bunifuSeparator1);
             this.Controls.Add(this.btnMinimize);
             this.Controls.Add(this.bunifuImageButton3);
             this.Controls.Add(this.btnClose);
@@ -183,5 +215,7 @@ namespace Server
         private Bunifu.Framework.UI.BunifuImageButton btnClose;
         private Bunifu.Framework.UI.BunifuImageButton bunifuImageButton3;
         private Bunifu.Framework.UI.BunifuImageButton btnMinimize;
+        private Bunifu.Framework.UI.BunifuSeparator bunifuSeparator2;
+        private Bunifu.Framework.UI.BunifuSeparator bunifuSeparator1;
     }
 }

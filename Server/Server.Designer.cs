@@ -68,7 +68,7 @@ namespace Server
             // 
             // bunifuElipse1
             // 
-            this.bunifuElipse1.ElipseRadius = 7;
+            this.bunifuElipse1.ElipseRadius = 17;
             this.bunifuElipse1.TargetControl = this;
             // 
             // btnClose

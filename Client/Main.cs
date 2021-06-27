@@ -16,13 +16,13 @@ namespace Client
 {
     public partial class Main : Form
     {
-        public List<string> FolderAdd = new List<string>() {"All mail", "Sent", "Drafts", "Important", "Starred", "Spam", "Trash" };
+        public List<string> FolderAdd;
+
+        public List<string> defaultFolders = new List<string>() { "All mail", "Sent", "Drafts", "Important", "Starred", "Spam", "Trash" };
 
         int mov;
         int movX;
         int movY;
-
-        loadingProgress lP;
 
         private Color activeColor = Color.FromArgb(2, 168, 244);
 
@@ -209,9 +209,7 @@ namespace Client
             string mess = $"{Login.user} list\n";
             SendMess(mess);
 
-
-            lP = new loadingProgress();
-            lP.Location = new Point(29, 668);
+            FolderAdd = new List<string>();
 
             selectedFolder = "All mail";
             mess = $"{Login.user} select \"" + selectedFolder + "\"\n";
@@ -249,20 +247,15 @@ namespace Client
                 }));
 
                 //Add "No mail here" label if there is no mail in folder
-                if (mailItems.Count != 0)
+                if (numberOfMail != 0)
                     pnlContainer.Controls.Remove(lbNoMail);
-                else
-                    pnlContainer.Controls.Add(lbNoMail);
-
-                //remove the loading animation
-                pnlFolder.Controls.Remove(lP);
             });
         }
 
 
         private void needToLoad()
         {
-            pnlFolder.Controls.Add(lP);
+            lbNoMail.Location = new Point(148, 65);
             pnlContainer.Controls.Add(lbNoMail);
 
             setViEnFalse(lbDate);
@@ -314,7 +307,6 @@ namespace Client
             rtb.Enabled = true;
         }
 
-        string FolderDeleted = "";
         private void msg()
         {
             if (this.InvokeRequired)
@@ -328,18 +320,12 @@ namespace Client
                     serverResponse = serverResponse.Substring(7);
                     string[] folder = serverResponse.Split(new[] { "* LIST ", "\n" }, StringSplitOptions.None);
                     foreach (var item in folder)
-                        if (!item.Contains("(Success)") && !item.Contains("\0") && item != "" && !FolderAdd.Contains(item))
+                        if (!item.Contains("(Success)") && !item.Contains("\0") && item != "" && !defaultFolders.Contains(item))
                         {
-                            bunifuDropdown1.AddItem(item);
+                            drdSeeMore.AddItem(item);
                             FolderAdd.Add(item);
                         }
-                        else if (item == FolderDeleted)
-                        {
-                            FolderAdd.Remove(FolderDeleted);
-                            bunifuDropdown1.RemoveItem(FolderDeleted);
-                        }
                 }
-               
                 else if (serverResponse.Contains($"{Login.user} OK {selectedFolder} selected. (Success)"))  // Select folder
                 {
                     //Set tilte for mail container
@@ -347,6 +333,12 @@ namespace Client
 
                     //Clear the mail container
                     pnlContainer.Controls.Clear();
+                    
+                    //Add the loading animation and hide the mail contain
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        needToLoad();
+                    });
 
                     numberOfMail = 0;
                     string mess = $"{Login.user} uid search all\n";
@@ -405,13 +397,16 @@ namespace Client
                 }
                 else if (serverResponse.Contains($"{Login.user} OK DELETE"))                                // Delete folder
                 {
+                    drdSeeMore.Clear();
+                    FolderAdd.Clear();
                     string[] tmp = serverResponse.Split(' ');
-                    FolderDeleted = tmp[3];
                     string mess = $"{Login.user} list\n";
                     SendMess(mess);
                 }
                 else if (serverResponse.Contains($"{Login.user} OK CREATE completed"))                                // Create folder
                 {
+                    drdSeeMore.Clear();
+                    FolderAdd.Clear();
                     string mess = $"{Login.user} list\n";
                     SendMess(mess);
                 }
@@ -466,8 +461,8 @@ namespace Client
 
         private void createFoldderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            textBox1.Visible = true;
             CreateFolBtn.Visible = true;
+            btnSearch.Visible = false;
         }
 
         void DelFol(object sender, ToolStripItemClickedEventArgs e)
@@ -480,11 +475,11 @@ namespace Client
         {
             (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems.Clear();
 
-            for (var i = 7; i < FolderAdd.Count; i++)
+            for (var i = 0; i < FolderAdd.Count(); i++)
             {
                 (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems.Add(FolderAdd[i]);
-                (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems[i - 7].BackColor = Color.FromArgb(59, 72, 77);
-                (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems[i - 7].ForeColor = Color.White;
+                (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems[i].BackColor = Color.FromArgb(59, 72, 77);
+                (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems[i].ForeColor = Color.White;
             }
         }
 
@@ -492,14 +487,25 @@ namespace Client
         {
             string command = $"{Login.user} create " + textBox1.Text + "\n";
             SendMess(command);
-            Restart();
+            CreateFolBtn.Visible = false;
+            btnSearch.Visible = true;
+            textBox1.Clear();
         }
 
-        //Làm sạch giao diện
-        public void Restart()
+        private void drdSeeMore_onItemSelected(object sender, EventArgs e)
         {
-            textBox1.Visible = false;
-            CreateFolBtn.Visible = false;
+            selectedFolder = drdSeeMore.selectedValue;
+            string command = $"{Login.user} select \"" + selectedFolder + "\"\n";
+            SendMess(command);
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            string mess = $"{Login.user} search " + textBox1.Text + '\n';
+            SendMess(mess);
+            pnlContainer.Controls.Clear();
+            textBox1.Clear();
+            numberOfMail = 0;
         }
     }
 }
