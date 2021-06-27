@@ -144,7 +144,6 @@ namespace Project
                 string mess = $"tag login {tbUserName.Text} {ComputeSha512Hash(tbPassword.Text)}\n";        // Hash password before send to server
                 SendMess(mess);
             }
-
         }
 
         private void Client_Load(object sender, EventArgs e)

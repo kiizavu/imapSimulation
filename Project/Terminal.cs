@@ -37,7 +37,32 @@ namespace Project
             }
             else
             {
-                rtbCommunication.Text += "S: " + serverResponse;
+                if (serverResponse.Contains("-;:{}"))
+                {
+                    string[] words = serverResponse.Split(new[] { "-;:{}" }, StringSplitOptions.None);
+                    string date = words[3];
+                    string from = words[1];
+                    string subject = words[2];
+                    string body = words[4];
+                    rtbCommunication.SelectionColor = Color.DeepSkyBlue;
+                    rtbCommunication.AppendText($"Date: {date}\nFrom: {from}\nSubject: {subject}\nBody:\n{body}\n");
+                }
+                else if (serverResponse.Contains("OK LOGOUT completed"))
+                {
+                    rtbCommunication.SelectionColor = Color.DeepSkyBlue;
+                    rtbCommunication.AppendText(serverResponse);
+                    ns.Close();
+                    tcpClient.Close();
+                    rtbCommunication.AppendText("The terminal will close in 3 second.\n");
+                    Task.Delay(3000).Wait();
+                    this.Close();
+                }
+                else
+                {
+                    rtbCommunication.SelectionColor = Color.DeepSkyBlue;
+                    rtbCommunication.AppendText(serverResponse);
+                }
+
             }
         }
 
@@ -93,13 +118,24 @@ namespace Project
             if (tbRequest.Text != string.Empty)
             {
                 string request = tbRequest.Text + "\n";
-                rtbCommunication.Text += "C: " + request;
+
+                rtbCommunication.SelectionColor = Color.Red;
+                rtbCommunication.AppendText(request);
+                //rtbCommunication.Text += request;
 
                 if(tbRequest.Text.Contains("login"))
                 {
                     string[] words = tbRequest.Text.Split(' ');
-                    user = words[2];
-                    request = $"{words[0]} {words[1]} {user} {ComputeSha512Hash(words[3])}\n";
+                    if (words.Length == 3)
+                    {
+                        user = words[1];
+                        request = $"tag {words[0]} {user} {ComputeSha512Hash(words[2])}\n";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Wrong command!!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
                 else
                 {
