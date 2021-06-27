@@ -170,18 +170,22 @@ namespace Project
             string selectFolderPath = clientsList[words[0]].selectFolderPath;
             List<string> folders = clientsList[words[0]].folders;
 
-            foreach (var item in folders)
+            if (folders != null)
             {
-                if (mess.Contains(item))
+                foreach (var item in folders)
                 {
-                    selectFolderPath = inboxPath + item;
-                    UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
-                    sendMess($"{words[0]} OK {item} selected. (Success)\n", client);
-                    return;
+                    if (mess.Contains(item))
+                    {
+                        selectFolderPath = inboxPath + item;
+                        UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
+                        sendMess($"{words[0]} OK {item} selected. (Success)\n", client);
+                        return;
+                    }
                 }
+                sendMess("Unknown mailbox (Failure)\n", client);
+                return;
             }
-            sendMess("Unknown mailbox (Failure)\n", client);
-            return;
+            sendMess("Use LIST command first\n", client);
         }
 
         private void GetMailUID(string user, Socket client)                 // Response uid of mail when client send SEARCH mail in folder request
@@ -212,21 +216,26 @@ namespace Project
                 string[] words = mess.Split(delimiterChars);
 
                 string selectFolderPath = clientsList[words[0]].selectFolderPath;
-                mess = mess.Substring(11 + words[0].Length);
-                string[] uids = mess.Split(delimiterChars);
-                foreach (var item in uids)
+                if (selectFolderPath != null)
                 {
-                    string date = File.ReadLines(selectFolderPath + "/" + item).Skip(0).Take(1).First();
-                    string from = File.ReadLines(selectFolderPath + "/" + item).Skip(1).Take(1).First();
-                    string sub = File.ReadLines(selectFolderPath + "/" + item).Skip(2).Take(1).First();
-                    string body = "";
-                    for (int i = 3; i < File.ReadLines(selectFolderPath + "/" + item).Count(); i++)
+                    mess = mess.Substring(11 + words[0].Length);
+                    string[] uids = mess.Split(delimiterChars);
+                    foreach (var item in uids)
                     {
-                        body += File.ReadLines(selectFolderPath + "/" + item).Skip(i).Take(1).First() + "\n";
+                        string date = File.ReadLines(selectFolderPath + "/" + item).Skip(0).Take(1).First();
+                        string from = File.ReadLines(selectFolderPath + "/" + item).Skip(1).Take(1).First();
+                        string sub = File.ReadLines(selectFolderPath + "/" + item).Skip(2).Take(1).First();
+                        string body = "";
+                        for (int i = 3; i < File.ReadLines(selectFolderPath + "/" + item).Count(); i++)
+                        {
+                            body += File.ReadLines(selectFolderPath + "/" + item).Skip(i).Take(1).First() + "\n";
+                        }
+                        string returnData = item + "-;:{}" + from + "-;:{}" + sub + "-;:{}" + date + "-;:{}" + body;
+                        sendMess(returnData, client);
                     }
-                    string returnData = item + "-" + from + "-" + sub + "-" + date + "-" + body;
-                    sendMess(returnData, client);
                 }
+                else
+                    sendMess("Select a folder first\n", client);
                     
             }
             catch { }
@@ -303,8 +312,10 @@ namespace Project
                         RelocateMail(text, client);
                     else if (text.Contains("logout"))
                         LogOutClient(words[0], client);
+                    else if (text.Contains("search from"))
+                        SearchFrom(text, client);
                     else
-                        sendMess("* BAD Unknown command", client);
+                        sendMess("* BAD Unknown command\n", client);
                 }
             }
             catch

@@ -38,6 +38,7 @@ namespace Project
             this.rtbCommunication.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbCommunication.Location = new System.Drawing.Point(12, 12);
             this.rtbCommunication.Name = "rtbCommunication";
+            this.rtbCommunication.ReadOnly = true;
             this.rtbCommunication.Size = new System.Drawing.Size(776, 426);
             this.rtbCommunication.TabIndex = 0;
             this.rtbCommunication.Text = "";

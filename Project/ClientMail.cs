@@ -79,9 +79,9 @@ namespace Project
                         SendMess(mess + "\n");
                     }
                 }
-                else if (serverResponse.Contains("-") && isMailSelected == 0)                               // List mail to list view
+                else if (serverResponse.Contains("-;:{}") && isMailSelected == 0)                               // List mail to list view
                 {
-                    string[] words = serverResponse.Split('-');
+                    string[] words = serverResponse.Split(new[] { "-;:{}" }, StringSplitOptions.None);
                     listView2.Items.Add(words[0]);
                     for (int i = 1; i < words.Length - 1; i++)
                     {
@@ -89,10 +89,10 @@ namespace Project
                     }
                     numberOfMail++;
                 }
-                else if (serverResponse.Contains("-") && isMailSelected == 1)                               // Select mail
+                else if (serverResponse.Contains("-;:{}") && isMailSelected == 1)                               // Select mail
                 {
                     richTextBox1.Text = "";
-                    string mailContaint = serverResponse.Replace('-','\n');
+                    string mailContaint = serverResponse.Replace("-;:{}", "\n");
                     richTextBox1.Text = mailContaint;
                     isMailSelected = 0;
                 }
@@ -102,19 +102,19 @@ namespace Project
                     this.log.Visible = true;
                     this.Close();
                 }
-                else if (serverResponse.Contains($"{Login.user} delete OK"))                                // Delete folder
+                else if (serverResponse.Contains($"{Login.user} OK DELETE Completed"))                                // Delete folder
                 {
                     listView1.Items.Clear();
                     string mess = $"{Login.user} list\n";
                     SendMess(mess);
                 }    
-                else if (serverResponse.Contains($"{Login.user} create OK"))                                // Create folder
+                else if (serverResponse.Contains($"{Login.user} OK CREATE completed"))                                // Create folder
                 {
                     listView1.Items.Clear();
                     string mess = $"{Login.user} list\n";
                     SendMess(mess);
                 }    
-                else if (serverResponse.Contains($"{Login.user} store OK") || serverResponse.Contains($"{Login.user} move OK"))
+                else if (serverResponse.Contains($"{Login.user} OK STORE completed") || serverResponse.Contains($"{Login.user} OK MOVE completed"))
                 {
                     listView2.Items.Clear();
                     string mess = $"{Login.user} select \"" + selectedFolder + "\"\n";
@@ -219,6 +219,20 @@ namespace Project
                 string mess = $"{Login.user} logout\n";
                 SendMess(mess);
             }
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            string mess = $"{Login.user} search " + tbSearch.Text + '\n';
+            SendMess(mess);
+            listView2.Items.Clear();
+            numberOfMail = 0;
+        }
+
+        private void ClientMail_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            string mess = $"{Login.user} logout\n";
+            SendMess(mess);
         }
     }
 }
