@@ -170,18 +170,22 @@ namespace Project
             string selectFolderPath = clientsList[words[0]].selectFolderPath;
             List<string> folders = clientsList[words[0]].folders;
 
-            foreach (var item in folders)
+            if (folders != null)
             {
-                if (mess.Contains(item))
+                foreach (var item in folders)
                 {
-                    selectFolderPath = inboxPath + item;
-                    UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
-                    sendMess($"{words[0]} OK {item} selected. (Success)\n", client);
-                    return;
+                    if (mess.Contains(item))
+                    {
+                        selectFolderPath = inboxPath + item;
+                        UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
+                        sendMess($"{words[0]} OK {item} selected. (Success)\n", client);
+                        return;
+                    }
                 }
+                sendMess("Unknown mailbox (Failure)\n", client);
+                return;
             }
-            sendMess("Unknown mailbox (Failure)\n", client);
-            return;
+            sendMess("Use LIST command first\n", client);
         }
 
         private void GetMailUID(string user, Socket client)                 // Response uid of mail when client send SEARCH mail in folder request
@@ -212,21 +216,26 @@ namespace Project
                 string[] words = mess.Split(delimiterChars);
 
                 string selectFolderPath = clientsList[words[0]].selectFolderPath;
-                mess = mess.Substring(11 + words[0].Length);
-                string[] uids = mess.Split(delimiterChars);
-                foreach (var item in uids)
+                if (selectFolderPath != null)
                 {
-                    string date = File.ReadLines(selectFolderPath + "/" + item).Skip(0).Take(1).First();
-                    string from = File.ReadLines(selectFolderPath + "/" + item).Skip(1).Take(1).First();
-                    string sub = File.ReadLines(selectFolderPath + "/" + item).Skip(2).Take(1).First();
-                    string body = "";
-                    for (int i = 3; i < File.ReadLines(selectFolderPath + "/" + item).Count(); i++)
+                    mess = mess.Substring(11 + words[0].Length);
+                    string[] uids = mess.Split(delimiterChars);
+                    foreach (var item in uids)
                     {
-                        body += File.ReadLines(selectFolderPath + "/" + item).Skip(i).Take(1).First() + "\n";
+                        string date = File.ReadLines(selectFolderPath + "/" + item).Skip(0).Take(1).First();
+                        string from = File.ReadLines(selectFolderPath + "/" + item).Skip(1).Take(1).First();
+                        string sub = File.ReadLines(selectFolderPath + "/" + item).Skip(2).Take(1).First();
+                        string body = "";
+                        for (int i = 3; i < File.ReadLines(selectFolderPath + "/" + item).Count(); i++)
+                        {
+                            body += File.ReadLines(selectFolderPath + "/" + item).Skip(i).Take(1).First() + "\n";
+                        }
+                        string returnData = item + "-;:{}" + from + "-;:{}" + sub + "-;:{}" + date + "-;:{}" + body;
+                        sendMess(returnData, client);
                     }
-                    string returnData = item + "-" + from + "-" + sub + "-" + date + "-" + body;
-                    sendMess(returnData, client);
                 }
+                else
+                    sendMess("Select a folder first\n", client);
                     
             }
             catch { }
@@ -268,7 +277,7 @@ namespace Project
                 mess = words[2];
                 folders.Add(mess);
                 Directory.CreateDirectory(inboxPath + mess);
-                sendMess($"{words[0]} create OK\n", client);
+                sendMess($"{words[0]} OK CREATE completed\n", client);
 
                 UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
             }
@@ -306,7 +315,7 @@ namespace Project
 
                 string curFolder = new DirectoryInfo(selectFolderPath).Name;
                 Copy_Mail(words[2], words[3], curFolder, inboxPath);
-                sendMess($"{words[0]} copy OK\n", client);
+                sendMess($"{words[0]} OK COPY completed\n", client);
             }
             catch { }
             return;
@@ -336,7 +345,7 @@ namespace Project
                 string selectFolderPath = clientsList[words[0]].selectFolderPath;
 
                 Delete_Mail(words[2], selectFolderPath);
-                sendMess($"{words[0]} store OK\n", client);
+                sendMess($"{words[0]} OK STORE completed\n", client);
             }
             catch { }
             return;
@@ -352,7 +361,7 @@ namespace Project
                 List<string> folders = clientsList[words[0]].folders;
 
                 Directory.Delete(selectFolderPath, true);
-                sendMess($"{words[0]} delete OK\n", client);
+                sendMess($"{words[0]} OK DELETE Completed\n", client);
 
                 UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
             }
@@ -374,16 +383,51 @@ namespace Project
                 string[] words = mess.Split(delimiterChars);
                 string inboxPath = clientsList[words[0]].inboxPath;
                 string selectFolderPath = clientsList[words[0]].selectFolderPath;
-                List<string> folders = clientsList[words[0]].folders;
 
                 string curFolder = new DirectoryInfo(selectFolderPath).Name;
                 Relocate_Mail(words[2], words[3], curFolder, inboxPath);
-                sendMess($"{words[0]} move OK\n", client);
+                sendMess($"{words[0]} OK MOVE completed\n", client);
             }
             catch { }
             return;
         }
-        // Nhan message tu client
+
+        private List<string> GetFromSearch(string search, string selectFolderPath)
+        {
+            List<string> uids = new List<string>();
+
+            DirectoryInfo d = new DirectoryInfo(selectFolderPath);
+            FileInfo[] subdi = d.GetFiles();
+
+            foreach (var item in subdi)
+            {
+                string from = File.ReadLines(item.FullName).Skip(1).Take(1).First();
+                if (from == search)
+                    uids.Add(item.Name);
+            }
+            return uids;
+        }
+
+        private void SearchFrom(string mess, Socket client)
+        {
+            List<string> uids = new List<string>();
+
+            string[] words = mess.Split(delimiterChars);
+            string selectFolderPath = clientsList[words[0]].selectFolderPath;
+            
+            string search = words[words.Length - 2];
+
+            uids = GetFromSearch(search, selectFolderPath);
+
+            string senddata = "* SEARCH ";
+
+            foreach (var item in uids)
+                senddata += item + " ";
+
+            senddata += $"\n{words[0]} OK SEARCH completed. (Success)";
+            sendMess(senddata, client);
+        }
+
         void getMess(object obj)
         {
             Socket client = obj as Socket;
@@ -430,8 +474,10 @@ namespace Project
                         RelocateMail(text, client);
                     else if (text.Contains("logout"))
                         LogOutClient(words[0], client);
+                    else if (text.Contains("search from"))
+                        SearchFrom(text, client);
                     else
-                        sendMess("* BAD Unknown command", client);
+                        sendMess("* BAD Unknown command\n", client);
                 }
             }
             catch
