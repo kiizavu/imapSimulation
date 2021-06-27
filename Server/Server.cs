@@ -357,11 +357,12 @@ namespace Server
             {
                 string[] words = mess.Split(delimiterChars);
                 string inboxPath = clientsList[words[0]].inboxPath;
-                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+                string selectFolderPath = inboxPath + words[2];
                 List<string> folders = clientsList[words[0]].folders;
 
                 Directory.Delete(selectFolderPath, true);
-                sendMess($"{words[0]} OK DELETE Completed\n", client);
+                var dirName = new DirectoryInfo(selectFolderPath).Name;
+                sendMess($"{words[0]} OK DELETE {dirName} Completed\n", client);
 
                 UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
             }
