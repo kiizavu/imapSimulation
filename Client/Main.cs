@@ -26,8 +26,6 @@ namespace Client
 
         private Color inactiveColor = Color.FromArgb(22, 25, 28);
 
-        const string IPADDRESS = "127.0.0.1";
-        const int PORT = 8080;
         char[] delimiterChars = { ' ', '-', '\n' };
         string serverResponse = null;
         string selectedFolder;
