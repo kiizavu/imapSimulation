@@ -46,7 +46,11 @@ namespace Server
 
         private void bunifuImageButton1_Click(object sender, EventArgs e)
         {
+            IPADDRESS = tbIPAddress.Text;
+            PORT = int.Parse(tbPort.Text);
 
+            Server server = new Server();
+            server.Show();
         }
     }
 }
