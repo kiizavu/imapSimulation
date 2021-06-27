@@ -16,6 +16,8 @@ namespace Client
 {
     public partial class Main : Form
     {
+        public List<string> FolderAdd = new List<string>() {"All mail", "Sent", "Drafts", "Important", "Starred", "Spam", "Trash" };
+
         int mov;
         int movX;
         int movY;
@@ -69,6 +71,8 @@ namespace Client
         public Main()
         {
             InitializeComponent();
+            (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItemClicked +=
+                    new ToolStripItemClickedEventHandler(DelFol);
             CheckForIllegalCrossThreadCalls = false;
         }
 
@@ -310,6 +314,7 @@ namespace Client
             rtb.Enabled = true;
         }
 
+        string FolderDeleted = "";
         private void msg()
         {
             if (this.InvokeRequired)
@@ -322,10 +327,19 @@ namespace Client
                 {
                     serverResponse = serverResponse.Substring(7);
                     string[] folder = serverResponse.Split(new[] { "* LIST ", "\n" }, StringSplitOptions.None);
-                    /*foreach (var item in folder)
-                        if (!item.Contains("(Success)") && !item.Contains("\0") && item != "")
-                            listView1.Items.Add(item);*/
+                    foreach (var item in folder)
+                        if (!item.Contains("(Success)") && !item.Contains("\0") && item != "" && !FolderAdd.Contains(item))
+                        {
+                            bunifuDropdown1.AddItem(item);
+                            FolderAdd.Add(item);
+                        }
+                        else if (item == FolderDeleted)
+                        {
+                            FolderAdd.Remove(FolderDeleted);
+                            bunifuDropdown1.RemoveItem(FolderDeleted);
+                        }
                 }
+               
                 else if (serverResponse.Contains($"{Login.user} OK {selectedFolder} selected. (Success)"))  // Select folder
                 {
                     //Set tilte for mail container
@@ -389,15 +403,15 @@ namespace Client
                     this.log.Visible = true;
                     this.Close();
                 }
-                else if (serverResponse.Contains($"{Login.user} OK DELETE Completed"))                                // Delete folder
+                else if (serverResponse.Contains($"{Login.user} OK DELETE"))                                // Delete folder
                 {
-                    //listView1.Items.Clear();
+                    string[] tmp = serverResponse.Split(' ');
+                    FolderDeleted = tmp[3];
                     string mess = $"{Login.user} list\n";
                     SendMess(mess);
                 }
                 else if (serverResponse.Contains($"{Login.user} OK CREATE completed"))                                // Create folder
                 {
-                    //listView1.Items.Clear();
                     string mess = $"{Login.user} list\n";
                     SendMess(mess);
                 }
@@ -439,6 +453,53 @@ namespace Client
             ns.Write(data, 0, data.Length);
             ns.Flush();
             return mess;
+        }
+
+        private void pnlFolder_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                pnlFolder.ContextMenuStrip = contextMenuStrip1;
+                pnlFolder.ContextMenuStrip.Show(new Point(e.X, e.Y));
+            }
+        }
+
+        private void createFoldderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            textBox1.Visible = true;
+            CreateFolBtn.Visible = true;
+        }
+
+        void DelFol(object sender, ToolStripItemClickedEventArgs e)
+        {
+            string msg = String.Format(e.ClickedItem.Text);
+            string command = $"{Login.user} delete " + msg + "\n";
+            SendMess(command);
+        }
+        private void deleteFolderToolStripMenuItem_MouseHover(object sender, EventArgs e)
+        {
+            (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems.Clear();
+
+            for (var i = 7; i < FolderAdd.Count; i++)
+            {
+                (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems.Add(FolderAdd[i]);
+                (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems[i - 7].BackColor = Color.FromArgb(59, 72, 77);
+                (contextMenuStrip1.Items[1] as ToolStripMenuItem).DropDownItems[i - 7].ForeColor = Color.White;
+            }
+        }
+
+        private void CreateFolBtn_Click(object sender, EventArgs e)
+        {
+            string command = $"{Login.user} create " + textBox1.Text + "\n";
+            SendMess(command);
+            Restart();
+        }
+
+        //Làm sạch giao diện
+        public void Restart()
+        {
+            textBox1.Visible = false;
+            CreateFolBtn.Visible = false;
         }
     }
 }

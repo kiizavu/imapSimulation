@@ -34,6 +34,7 @@ namespace Client
             this.bunifuElipse1 = new Bunifu.Framework.UI.BunifuElipse(this.components);
             this.bunifuDragControl1 = new Bunifu.Framework.UI.BunifuDragControl(this.components);
             this.pnlFolder = new System.Windows.Forms.Panel();
+            this.bunifuDropdown1 = new Bunifu.Framework.UI.BunifuDropdown();
             this.bunifuSeparator5 = new Bunifu.Framework.UI.BunifuSeparator();
             this.btnLogOut = new Bunifu.Framework.UI.BunifuFlatButton();
             this.btnTrash = new Bunifu.Framework.UI.BunifuFlatButton();
@@ -86,6 +87,8 @@ namespace Client
             // pnlFolder
             // 
             this.pnlFolder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
+            this.pnlFolder.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pnlFolder.Controls.Add(this.bunifuDropdown1);
             this.pnlFolder.Controls.Add(this.bunifuSeparator5);
             this.pnlFolder.Controls.Add(this.btnLogOut);
             this.pnlFolder.Controls.Add(this.btnTrash);
@@ -98,13 +101,29 @@ namespace Client
             this.pnlFolder.Controls.Add(this.pictureBox1);
             this.pnlFolder.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlFolder.Location = new System.Drawing.Point(0, 0);
-            this.pnlFolder.Margin = new System.Windows.Forms.Padding(2);
+            this.pnlFolder.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlFolder.Name = "pnlFolder";
-            this.pnlFolder.Size = new System.Drawing.Size(587, 764);
+            this.pnlFolder.Size = new System.Drawing.Size(783, 940);
             this.pnlFolder.TabIndex = 1;
+            this.pnlFolder.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pnlFolder_MouseClick);
             this.pnlFolder.MouseDown += new System.Windows.Forms.MouseEventHandler(this._MouseDown);
             this.pnlFolder.MouseMove += new System.Windows.Forms.MouseEventHandler(this._MouseMove);
             this.pnlFolder.MouseUp += new System.Windows.Forms.MouseEventHandler(this._MouseUp);
+            // 
+            // bunifuDropdown1
+            // 
+            this.bunifuDropdown1.BackColor = System.Drawing.Color.Transparent;
+            this.bunifuDropdown1.BorderRadius = 3;
+            this.bunifuDropdown1.ForeColor = System.Drawing.Color.White;
+            this.bunifuDropdown1.Items = new string[0];
+            this.bunifuDropdown1.Location = new System.Drawing.Point(13, 722);
+            this.bunifuDropdown1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.bunifuDropdown1.Name = "bunifuDropdown1";
+            this.bunifuDropdown1.NomalColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
+            this.bunifuDropdown1.onHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(129)))), ((int)(((byte)(77)))));
+            this.bunifuDropdown1.selectedIndex = -1;
+            this.bunifuDropdown1.Size = new System.Drawing.Size(174, 43);
+            this.bunifuDropdown1.TabIndex = 20;
             // 
             // bunifuSeparator5
             // 
@@ -112,10 +131,10 @@ namespace Client
             this.bunifuSeparator5.ForeColor = System.Drawing.Color.Transparent;
             this.bunifuSeparator5.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(105)))), ((int)(((byte)(105)))));
             this.bunifuSeparator5.LineThickness = 1;
-            this.bunifuSeparator5.Location = new System.Drawing.Point(147, 0);
+            this.bunifuSeparator5.Location = new System.Drawing.Point(196, 0);
             this.bunifuSeparator5.Margin = new System.Windows.Forms.Padding(0);
             this.bunifuSeparator5.Name = "bunifuSeparator5";
-            this.bunifuSeparator5.Size = new System.Drawing.Size(1, 764);
+            this.bunifuSeparator5.Size = new System.Drawing.Size(1, 940);
             this.bunifuSeparator5.TabIndex = 19;
             this.bunifuSeparator5.Transparency = 255;
             this.bunifuSeparator5.Vertical = true;
@@ -143,14 +162,14 @@ namespace Client
             this.btnLogOut.IconVisible = true;
             this.btnLogOut.IconZoom = 55D;
             this.btnLogOut.IsTab = false;
-            this.btnLogOut.Location = new System.Drawing.Point(20, 605);
-            this.btnLogOut.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnLogOut.Location = new System.Drawing.Point(27, 863);
+            this.btnLogOut.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.btnLogOut.Name = "btnLogOut";
             this.btnLogOut.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
             this.btnLogOut.OnHovercolor = System.Drawing.Color.Red;
             this.btnLogOut.OnHoverTextColor = System.Drawing.Color.White;
             this.btnLogOut.selected = false;
-            this.btnLogOut.Size = new System.Drawing.Size(113, 32);
+            this.btnLogOut.Size = new System.Drawing.Size(151, 39);
             this.btnLogOut.TabIndex = 18;
             this.btnLogOut.Text = "Log Out";
             this.btnLogOut.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -181,14 +200,14 @@ namespace Client
             this.btnTrash.IconVisible = true;
             this.btnTrash.IconZoom = 55D;
             this.btnTrash.IsTab = false;
-            this.btnTrash.Location = new System.Drawing.Point(20, 547);
-            this.btnTrash.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnTrash.Location = new System.Drawing.Point(27, 673);
+            this.btnTrash.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.btnTrash.Name = "btnTrash";
             this.btnTrash.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
             this.btnTrash.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(52)))), ((int)(((byte)(57)))));
             this.btnTrash.OnHoverTextColor = System.Drawing.Color.White;
             this.btnTrash.selected = false;
-            this.btnTrash.Size = new System.Drawing.Size(113, 32);
+            this.btnTrash.Size = new System.Drawing.Size(151, 39);
             this.btnTrash.TabIndex = 17;
             this.btnTrash.Text = "Trash";
             this.btnTrash.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -219,14 +238,14 @@ namespace Client
             this.btnSpam.IconVisible = true;
             this.btnSpam.IconZoom = 55D;
             this.btnSpam.IsTab = false;
-            this.btnSpam.Location = new System.Drawing.Point(20, 501);
-            this.btnSpam.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnSpam.Location = new System.Drawing.Point(27, 617);
+            this.btnSpam.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.btnSpam.Name = "btnSpam";
             this.btnSpam.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
             this.btnSpam.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(52)))), ((int)(((byte)(57)))));
             this.btnSpam.OnHoverTextColor = System.Drawing.Color.White;
             this.btnSpam.selected = false;
-            this.btnSpam.Size = new System.Drawing.Size(113, 32);
+            this.btnSpam.Size = new System.Drawing.Size(151, 39);
             this.btnSpam.TabIndex = 16;
             this.btnSpam.Text = "Spam";
             this.btnSpam.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -257,14 +276,14 @@ namespace Client
             this.btnStarred.IconVisible = true;
             this.btnStarred.IconZoom = 55D;
             this.btnStarred.IsTab = false;
-            this.btnStarred.Location = new System.Drawing.Point(20, 454);
-            this.btnStarred.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnStarred.Location = new System.Drawing.Point(27, 559);
+            this.btnStarred.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.btnStarred.Name = "btnStarred";
             this.btnStarred.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
             this.btnStarred.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(52)))), ((int)(((byte)(57)))));
             this.btnStarred.OnHoverTextColor = System.Drawing.Color.White;
             this.btnStarred.selected = false;
-            this.btnStarred.Size = new System.Drawing.Size(113, 32);
+            this.btnStarred.Size = new System.Drawing.Size(151, 39);
             this.btnStarred.TabIndex = 15;
             this.btnStarred.Text = "Starred";
             this.btnStarred.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -295,14 +314,14 @@ namespace Client
             this.btnImportant.IconVisible = true;
             this.btnImportant.IconZoom = 55D;
             this.btnImportant.IsTab = false;
-            this.btnImportant.Location = new System.Drawing.Point(20, 408);
-            this.btnImportant.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnImportant.Location = new System.Drawing.Point(27, 502);
+            this.btnImportant.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.btnImportant.Name = "btnImportant";
             this.btnImportant.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
             this.btnImportant.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(52)))), ((int)(((byte)(57)))));
             this.btnImportant.OnHoverTextColor = System.Drawing.Color.White;
             this.btnImportant.selected = false;
-            this.btnImportant.Size = new System.Drawing.Size(113, 32);
+            this.btnImportant.Size = new System.Drawing.Size(151, 39);
             this.btnImportant.TabIndex = 14;
             this.btnImportant.Text = "Important";
             this.btnImportant.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -333,14 +352,14 @@ namespace Client
             this.btnDrafts.IconVisible = true;
             this.btnDrafts.IconZoom = 55D;
             this.btnDrafts.IsTab = false;
-            this.btnDrafts.Location = new System.Drawing.Point(20, 362);
-            this.btnDrafts.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnDrafts.Location = new System.Drawing.Point(27, 446);
+            this.btnDrafts.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.btnDrafts.Name = "btnDrafts";
             this.btnDrafts.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
             this.btnDrafts.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(52)))), ((int)(((byte)(57)))));
             this.btnDrafts.OnHoverTextColor = System.Drawing.Color.White;
             this.btnDrafts.selected = false;
-            this.btnDrafts.Size = new System.Drawing.Size(113, 32);
+            this.btnDrafts.Size = new System.Drawing.Size(151, 39);
             this.btnDrafts.TabIndex = 13;
             this.btnDrafts.Text = "Drafts";
             this.btnDrafts.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -371,14 +390,14 @@ namespace Client
             this.btnSent.IconVisible = true;
             this.btnSent.IconZoom = 55D;
             this.btnSent.IsTab = false;
-            this.btnSent.Location = new System.Drawing.Point(20, 315);
-            this.btnSent.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnSent.Location = new System.Drawing.Point(27, 388);
+            this.btnSent.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.btnSent.Name = "btnSent";
             this.btnSent.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
             this.btnSent.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(52)))), ((int)(((byte)(57)))));
             this.btnSent.OnHoverTextColor = System.Drawing.Color.White;
             this.btnSent.selected = false;
-            this.btnSent.Size = new System.Drawing.Size(113, 32);
+            this.btnSent.Size = new System.Drawing.Size(151, 39);
             this.btnSent.TabIndex = 12;
             this.btnSent.Text = "Sent";
             this.btnSent.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -409,14 +428,14 @@ namespace Client
             this.btnAll.IconVisible = true;
             this.btnAll.IconZoom = 55D;
             this.btnAll.IsTab = false;
-            this.btnAll.Location = new System.Drawing.Point(20, 269);
-            this.btnAll.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnAll.Location = new System.Drawing.Point(27, 331);
+            this.btnAll.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.btnAll.Name = "btnAll";
             this.btnAll.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
             this.btnAll.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(52)))), ((int)(((byte)(57)))));
             this.btnAll.OnHoverTextColor = System.Drawing.Color.White;
             this.btnAll.selected = false;
-            this.btnAll.Size = new System.Drawing.Size(113, 32);
+            this.btnAll.Size = new System.Drawing.Size(151, 39);
             this.btnAll.TabIndex = 11;
             this.btnAll.Text = "All Mail";
             this.btnAll.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -431,25 +450,27 @@ namespace Client
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.pictureBox1.Enabled = false;
             this.pictureBox1.InitialImage = null;
-            this.pictureBox1.Location = new System.Drawing.Point(2, 2);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBox1.Location = new System.Drawing.Point(3, 2);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(146, 210);
+            this.pictureBox1.Size = new System.Drawing.Size(195, 258);
             this.pictureBox1.TabIndex = 12;
             this.pictureBox1.TabStop = false;
             // 
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
+            this.panel2.Controls.Add(this.CreateFolBtn);
+            this.panel2.Controls.Add(this.textBox1);
             this.panel2.Controls.Add(this.bunifuSeparator4);
             this.panel2.Controls.Add(this.bunifuSeparator2);
             this.panel2.Controls.Add(this.bunifuSeparator3);
             this.panel2.Controls.Add(this.lbTilte);
             this.panel2.Controls.Add(this.pnlContainer);
-            this.panel2.Location = new System.Drawing.Point(147, 23);
-            this.panel2.Margin = new System.Windows.Forms.Padding(2);
+            this.panel2.Location = new System.Drawing.Point(196, 28);
+            this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(440, 741);
+            this.panel2.Size = new System.Drawing.Size(587, 912);
             this.panel2.TabIndex = 1;
             // 
             // bunifuSeparator4
@@ -457,9 +478,10 @@ namespace Client
             this.bunifuSeparator4.BackColor = System.Drawing.Color.Transparent;
             this.bunifuSeparator4.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(105)))), ((int)(((byte)(105)))));
             this.bunifuSeparator4.LineThickness = 1;
-            this.bunifuSeparator4.Location = new System.Drawing.Point(0, 179);
+            this.bunifuSeparator4.Location = new System.Drawing.Point(0, 220);
+            this.bunifuSeparator4.Margin = new System.Windows.Forms.Padding(5);
             this.bunifuSeparator4.Name = "bunifuSeparator4";
-            this.bunifuSeparator4.Size = new System.Drawing.Size(440, 1);
+            this.bunifuSeparator4.Size = new System.Drawing.Size(587, 1);
             this.bunifuSeparator4.TabIndex = 4;
             this.bunifuSeparator4.Transparency = 255;
             this.bunifuSeparator4.Vertical = false;
@@ -470,10 +492,10 @@ namespace Client
             this.bunifuSeparator2.ForeColor = System.Drawing.Color.Transparent;
             this.bunifuSeparator2.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(105)))), ((int)(((byte)(105)))));
             this.bunifuSeparator2.LineThickness = 1;
-            this.bunifuSeparator2.Location = new System.Drawing.Point(440, 0);
+            this.bunifuSeparator2.Location = new System.Drawing.Point(587, 0);
             this.bunifuSeparator2.Margin = new System.Windows.Forms.Padding(0);
             this.bunifuSeparator2.Name = "bunifuSeparator2";
-            this.bunifuSeparator2.Size = new System.Drawing.Size(1, 764);
+            this.bunifuSeparator2.Size = new System.Drawing.Size(1, 940);
             this.bunifuSeparator2.TabIndex = 3;
             this.bunifuSeparator2.Transparency = 255;
             this.bunifuSeparator2.Vertical = true;
@@ -487,7 +509,7 @@ namespace Client
             this.bunifuSeparator3.Location = new System.Drawing.Point(0, 0);
             this.bunifuSeparator3.Margin = new System.Windows.Forms.Padding(0);
             this.bunifuSeparator3.Name = "bunifuSeparator3";
-            this.bunifuSeparator3.Size = new System.Drawing.Size(1, 764);
+            this.bunifuSeparator3.Size = new System.Drawing.Size(1, 940);
             this.bunifuSeparator3.TabIndex = 2;
             this.bunifuSeparator3.Transparency = 255;
             this.bunifuSeparator3.Vertical = true;
@@ -498,10 +520,9 @@ namespace Client
             this.lbTilte.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(25)))), ((int)(((byte)(28)))));
             this.lbTilte.Font = new System.Drawing.Font("Times New Roman", 40.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbTilte.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lbTilte.Location = new System.Drawing.Point(8, 50);
-            this.lbTilte.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lbTilte.Location = new System.Drawing.Point(11, 62);
             this.lbTilte.Name = "lbTilte";
-            this.lbTilte.Size = new System.Drawing.Size(158, 62);
+            this.lbTilte.Size = new System.Drawing.Size(202, 77);
             this.lbTilte.TabIndex = 1;
             this.lbTilte.Text = "Inbox";
             // 
@@ -509,10 +530,10 @@ namespace Client
             // 
             this.pnlContainer.AutoScroll = true;
             this.pnlContainer.Controls.Add(this.lbNoMail);
-            this.pnlContainer.Location = new System.Drawing.Point(2, 181);
-            this.pnlContainer.Margin = new System.Windows.Forms.Padding(2);
+            this.pnlContainer.Location = new System.Drawing.Point(3, 223);
+            this.pnlContainer.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(438, 562);
+            this.pnlContainer.Size = new System.Drawing.Size(584, 692);
             this.pnlContainer.TabIndex = 0;
             // 
             // lbNoMail
@@ -520,10 +541,9 @@ namespace Client
             this.lbNoMail.AutoSize = true;
             this.lbNoMail.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbNoMail.ForeColor = System.Drawing.Color.DimGray;
-            this.lbNoMail.Location = new System.Drawing.Point(148, 65);
-            this.lbNoMail.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lbNoMail.Location = new System.Drawing.Point(197, 80);
             this.lbNoMail.Name = "lbNoMail";
-            this.lbNoMail.Size = new System.Drawing.Size(153, 27);
+            this.lbNoMail.Size = new System.Drawing.Size(189, 34);
             this.lbNoMail.TabIndex = 0;
             this.lbNoMail.Text = "No mails here!";
             // 
@@ -534,10 +554,10 @@ namespace Client
             this.pnlContain.Controls.Add(this.lbNoMailSelect);
             this.pnlContain.Controls.Add(this.rtbBody);
             this.pnlContain.Controls.Add(this.lbSubject);
-            this.pnlContain.Location = new System.Drawing.Point(592, 23);
-            this.pnlContain.Margin = new System.Windows.Forms.Padding(2);
+            this.pnlContain.Location = new System.Drawing.Point(789, 28);
+            this.pnlContain.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlContain.Name = "pnlContain";
-            this.pnlContain.Size = new System.Drawing.Size(608, 743);
+            this.pnlContain.Size = new System.Drawing.Size(811, 914);
             this.pnlContain.TabIndex = 2;
             // 
             // rtbFrom
@@ -546,10 +566,10 @@ namespace Client
             this.rtbFrom.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.rtbFrom.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbFrom.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.rtbFrom.Location = new System.Drawing.Point(32, 168);
-            this.rtbFrom.Margin = new System.Windows.Forms.Padding(2);
+            this.rtbFrom.Location = new System.Drawing.Point(43, 207);
+            this.rtbFrom.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.rtbFrom.Name = "rtbFrom";
-            this.rtbFrom.Size = new System.Drawing.Size(555, 24);
+            this.rtbFrom.Size = new System.Drawing.Size(740, 30);
             this.rtbFrom.TabIndex = 7;
             this.rtbFrom.Text = "From";
             // 
@@ -558,10 +578,9 @@ namespace Client
             this.lbNoMailSelect.AutoSize = true;
             this.lbNoMailSelect.Font = new System.Drawing.Font("Times New Roman", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbNoMailSelect.ForeColor = System.Drawing.Color.DarkGray;
-            this.lbNoMailSelect.Location = new System.Drawing.Point(206, 244);
-            this.lbNoMailSelect.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lbNoMailSelect.Location = new System.Drawing.Point(275, 300);
             this.lbNoMailSelect.Name = "lbNoMailSelect";
-            this.lbNoMailSelect.Size = new System.Drawing.Size(211, 31);
+            this.lbNoMailSelect.Size = new System.Drawing.Size(251, 37);
             this.lbNoMailSelect.TabIndex = 6;
             this.lbNoMailSelect.Text = "No mails Selected";
             // 
@@ -572,11 +591,11 @@ namespace Client
             this.rtbBody.Enabled = false;
             this.rtbBody.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbBody.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.rtbBody.Location = new System.Drawing.Point(32, 214);
-            this.rtbBody.Margin = new System.Windows.Forms.Padding(2);
+            this.rtbBody.Location = new System.Drawing.Point(43, 263);
+            this.rtbBody.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.rtbBody.Name = "rtbBody";
             this.rtbBody.ReadOnly = true;
-            this.rtbBody.Size = new System.Drawing.Size(552, 516);
+            this.rtbBody.Size = new System.Drawing.Size(736, 635);
             this.rtbBody.TabIndex = 2;
             this.rtbBody.Text = "Body";
             this.rtbBody.Visible = false;
@@ -586,10 +605,9 @@ namespace Client
             this.lbSubject.Enabled = false;
             this.lbSubject.Font = new System.Drawing.Font("Times New Roman", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbSubject.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lbSubject.Location = new System.Drawing.Point(26, 39);
-            this.lbSubject.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lbSubject.Location = new System.Drawing.Point(35, 48);
             this.lbSubject.Name = "lbSubject";
-            this.lbSubject.Size = new System.Drawing.Size(561, 113);
+            this.lbSubject.Size = new System.Drawing.Size(748, 139);
             this.lbSubject.TabIndex = 0;
             this.lbSubject.Text = "Subject";
             this.lbSubject.Visible = false;
@@ -602,7 +620,7 @@ namespace Client
             this.lbDate.Location = new System.Drawing.Point(963, 9);
             this.lbDate.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lbDate.Name = "lbDate";
-            this.lbDate.Size = new System.Drawing.Size(157, 19);
+            this.lbDate.Size = new System.Drawing.Size(209, 23);
             this.lbDate.TabIndex = 5;
             this.lbDate.Text = "Date";
             this.lbDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -666,7 +684,7 @@ namespace Client
             // 
             // Main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(52)))), ((int)(((byte)(57)))));
             this.ClientSize = new System.Drawing.Size(1200, 764);
@@ -680,7 +698,7 @@ namespace Client
             this.Controls.Add(this.pnlContain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Main";
