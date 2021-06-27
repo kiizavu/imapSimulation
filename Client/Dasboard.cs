@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Server
+namespace Client
 {
     public partial class Dasboard : Form
     {
@@ -49,9 +49,9 @@ namespace Server
             IPADDRESS = tbIPAddress.Text;
             PORT = int.Parse(tbPort.Text);
 
-            Server server = new Server();
-            server.Show();
-            server.dasboard = this;
+            Terminal terminal = new Terminal();
+            terminal.Show();
+            terminal.dasboard = this;
             this.Visible = false;
         }
 
@@ -63,6 +63,17 @@ namespace Server
         private void btnMinimize_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void bunifuImageButton2_Click(object sender, EventArgs e)
+        {
+            IPADDRESS = tbIPAddress.Text;
+            PORT = int.Parse(tbPort.Text);
+
+            Login login = new Login();
+            login.Show();
+            login.dasboard = this;
+            this.Visible = false;
         }
     }
 }

@@ -16,17 +16,21 @@ namespace Server
 {
     public partial class Server : Form
     {
-        const string IPADDRESS = "127.0.0.1";
-        const int PORT = 8080;
+        int mov;
+        int movX;
+        int movY;
+
         static string rootPath = Path.GetDirectoryName(Application.ExecutablePath);
         static string accountDBPath = rootPath + @"/db.csv";
         char[] delimiterChars = { ' ', '-', '\n' };
 
+        public Dasboard dasboard { get; set; }
         Socket listenerSocket;
         IPEndPoint ipepServer;
         List<Socket> clientSocketList;
         Dictionary<string, string> db;
         Dictionary<string, pathForClient> clientsList;
+
 
         struct pathForClient
         {
@@ -45,7 +49,7 @@ namespace Server
             clientSocketList = new List<Socket>();
 
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            ipepServer = new IPEndPoint(IPAddress.Parse(IPADDRESS), PORT);
+            ipepServer = new IPEndPoint(IPAddress.Parse(Dasboard.IPADDRESS), Dasboard.PORT);
             listenerSocket.Bind(ipepServer);
 
             Thread listen = new Thread(() =>
@@ -66,14 +70,15 @@ namespace Server
                 catch
                 {
                     listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    ipepServer = new IPEndPoint(IPAddress.Parse(IPADDRESS), PORT);
+                    ipepServer = new IPEndPoint(IPAddress.Parse(Dasboard.IPADDRESS), Dasboard.PORT);
                     listenerSocket.Bind(ipepServer);
                 }
 
             });
             listen.IsBackground = true;
             listen.Start();
-            richTextBox1.Text = "S: " + "OK " + "IMAP server ready.\n";
+            rtbCommunication.SelectionColor = Color.DeepSkyBlue;
+            rtbCommunication.AppendText("OK IMAP server ready.\n");
         }
 
         void sendMess(string s, Socket client)
@@ -83,7 +88,9 @@ namespace Server
                 if (item != null && item == client)
                     item.Send(Encoding.UTF8.GetBytes(s));
             }
-            richTextBox1.Text += "S: " + s;
+
+            rtbCommunication.SelectionColor = Color.DeepSkyBlue;
+            rtbCommunication.AppendText(s);
         }
 
         private void GetAccoutDB()                                          // Save database of accounts to a dictionary
@@ -447,7 +454,8 @@ namespace Server
                         text += Encoding.UTF8.GetString(recv);
                     } while (text[text.Length - 1] != '\n');
 
-                    richTextBox1.Text += "C: " + endPoint + ": " + text;
+                    rtbCommunication.SelectionColor = Color.Red;
+                    rtbCommunication.AppendText(endPoint + ": " + text);
 
 
                     string[] words = text.Split(delimiterChars);
@@ -500,8 +508,44 @@ namespace Server
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            richTextBox1.SelectionStart = richTextBox1.Text.Length;
-            richTextBox1.ScrollToCaret();
+            rtbCommunication.SelectionStart = rtbCommunication.Text.Length;
+            rtbCommunication.ScrollToCaret();
+        }
+
+        private void Server_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            listenerSocket.Close();
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////// move form possition//////////////////////////////////
+        private void _MouseDown(object sender, MouseEventArgs e)
+        {
+            mov = 1;
+            movX = e.X;
+            movY = e.Y;
+        }
+
+        private void _MouseMove(object sender, MouseEventArgs e)
+        {
+            if (mov == 1)
+                this.SetDesktopLocation(MousePosition.X - movX, MousePosition.Y - movY);
+        }
+
+        private void _MouseUp(object sender, MouseEventArgs e)
+        {
+            mov = 0;
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            this.dasboard.Close();
+        }
+
+        private void btnMinimize_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
     }
 }
