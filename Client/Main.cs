@@ -247,7 +247,7 @@ namespace Client
                 }));
 
                 //Add "No mail here" label if there is no mail in folder
-                if (numberOfMail != 0)
+                if (numberOfMail >= 0)
                     pnlContainer.Controls.Remove(lbNoMail);
             });
         }

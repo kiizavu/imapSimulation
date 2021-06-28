@@ -114,11 +114,17 @@ namespace Client
         {
             (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems.Clear();
 
+            for (var i = 0; i < main.defaultFolders.Count; i++)
+            {
+                (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems.Add(main.defaultFolders[i]);
+                (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems[i].BackColor = Color.FromArgb(59, 72, 77);
+                (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems[i].ForeColor = Color.White;
+            }
             for (var i = 0; i < main.FolderAdd.Count; i++)
             {
                 (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems.Add(main.FolderAdd[i]);
-                (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems[i].BackColor = Color.FromArgb(59, 72, 77);
-                (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems[i].ForeColor = Color.White;
+                (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems[i + 7].BackColor = Color.FromArgb(59, 72, 77);
+                (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems[i + 7].ForeColor = Color.White;
             }
         }
 
@@ -136,12 +142,23 @@ namespace Client
         {
             (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems.Clear();
 
-            for (var i = 0; i < main.FolderAdd.Count; i++)
+            for (var i = 0; i < main.defaultFolders.Count; i++)
             {
-                (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems.Add(main.FolderAdd[i]);
+                (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems.Add(main.defaultFolders[i]);
                 (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems[i].BackColor = Color.FromArgb(59, 72, 77);
                 (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems[i].ForeColor = Color.White;
             }
+            for (var i = 0; i < main.FolderAdd.Count; i++)
+            {
+                (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems.Add(main.FolderAdd[i]);
+                (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems[i + 7].BackColor = Color.FromArgb(59, 72, 77);
+                (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems[i + 7].ForeColor = Color.White;
+            }
+        }
+
+        private void lbBody_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
