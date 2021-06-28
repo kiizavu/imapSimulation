@@ -103,6 +103,7 @@ namespace Client
             this.lbBody.Text = "Body";
             this.lbBody.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lbBody.UseCompatibleTextRendering = true;
+            this.lbBody.Click += new System.EventHandler(this.lbBody_Click);
             this.lbBody.MouseEnter += new System.EventHandler(this.MailItem_MouseEnter);
             this.lbBody.MouseLeave += new System.EventHandler(this.MailItem_MouseLeave);
             // 
@@ -145,7 +146,7 @@ namespace Client
             this.checkBox.CheckedOnColor = System.Drawing.Color.FromArgb(((int)(((byte)(2)))), ((int)(((byte)(168)))), ((int)(((byte)(244)))));
             this.checkBox.ForeColor = System.Drawing.Color.White;
             this.checkBox.Location = new System.Drawing.Point(36, 73);
-            this.checkBox.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.checkBox.Margin = new System.Windows.Forms.Padding(5);
             this.checkBox.Name = "checkBox";
             this.checkBox.Size = new System.Drawing.Size(20, 20);
             this.checkBox.TabIndex = 1;
@@ -159,7 +160,7 @@ namespace Client
             this.deleteToolStripMenuItem,
             this.moveToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(215, 110);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(127, 82);
             // 
             // copyToolStripMenuItem
             // 
@@ -167,7 +168,7 @@ namespace Client
             this.copyToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.copyToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("copyToolStripMenuItem.Image")));
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(126, 26);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.MouseHover += new System.EventHandler(this.copyToolStripMenuItem_MouseHover);
             // 
@@ -177,7 +178,7 @@ namespace Client
             this.deleteToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.deleteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("deleteToolStripMenuItem.Image")));
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(126, 26);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
@@ -187,7 +188,7 @@ namespace Client
             this.moveToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.moveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("moveToolStripMenuItem.Image")));
             this.moveToolStripMenuItem.Name = "moveToolStripMenuItem";
-            this.moveToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.moveToolStripMenuItem.Size = new System.Drawing.Size(126, 26);
             this.moveToolStripMenuItem.Text = "Move";
             this.moveToolStripMenuItem.MouseHover += new System.EventHandler(this.moveToolStripMenuItem_MouseHover);
             // 
