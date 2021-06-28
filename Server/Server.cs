@@ -255,7 +255,7 @@ namespace Server
             {
                 if (clientsList.Keys.ToList().IndexOf(user) != -1)
                 {
-                    string returnData = $"*BYE IMAP Server logging out\nS: {user} OK LOGOUT completed\n";
+                    string returnData = $"*BYE IMAP Server logging out\n{user} OK LOGOUT completed\n";
                     sendMess(returnData, client);
                     clientsList.Remove(user);
                 }
