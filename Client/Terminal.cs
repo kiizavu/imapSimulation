@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.Security.Cryptography;
+using System.IO;
 
 namespace Client
 {
@@ -26,6 +27,9 @@ namespace Client
         public Dasboard dasboard { get; set; }
         TcpClient tcpClient = new TcpClient();
         NetworkStream ns = default(NetworkStream);
+
+        string initVec = "4JoZD9aVHWnVmlXe5INNow==";
+        string pk = "prrtiNdMz2fG1SB7KMevbDwo9qQFCmgdWGitgdTa23Q=";
 
         public Terminal()
         {
@@ -60,33 +64,41 @@ namespace Client
             }
             else
             {
-                if (serverResponse.Contains("-;:{}"))
+                int cut = serverResponse.IndexOf('\0');
+                serverResponse = serverResponse.Substring(0, cut);
+                string[] Responses = serverResponse.Split('\n');
+                for (int i = 0; i < Responses.Count(); i++)
                 {
-                    string[] words = serverResponse.Split(new[] { "-;:{}" }, StringSplitOptions.None);
-                    string date = words[3];
-                    string from = words[1];
-                    string subject = words[2];
-                    string body = words[4];
-                    rtbCommunication.SelectionColor = Color.Green;
-                    rtbCommunication.AppendText($"Date: {date}\nFrom: {from}\nSubject: {subject}\nBody:\n{body}\n");
-                }
-                else if (serverResponse.Contains("OK LOGOUT completed"))
-                {
-                    rtbCommunication.SelectionColor = Color.Green;
-                    rtbCommunication.AppendText(serverResponse);
-                    ns.Close();
-                    tcpClient.Close();
-                    rtbCommunication.AppendText("The terminal will close in 3 second.\n");
-                    Task.Delay(3000).Wait();
-                    this.Close();
-                    this.dasboard.Visible = true;
-                }
-                else
-                {
-                    rtbCommunication.SelectionColor = Color.Green;
-                    rtbCommunication.AppendText(serverResponse);
-                }
+                    if (Responses[i] != "")
+                        Responses[i] = DecryptAES(Responses[i], pk, initVec);
 
+                    if (Responses[i].Contains("-;:{}"))
+                    {
+                        string[] words = Responses[i].Split(new[] { "-;:{}" }, StringSplitOptions.None);
+                        string date = words[3];
+                        string from = words[1];
+                        string subject = words[2];
+                        string body = words[4];
+                        rtbCommunication.SelectionColor = Color.Green;
+                        rtbCommunication.AppendText($"Date: {date}\nFrom: {from}\nSubject: {subject}\nBody:\n{body}\n");
+                    }
+                    else if (Responses[i].Contains("OK LOGOUT completed"))
+                    {
+                        rtbCommunication.SelectionColor = Color.Green;
+                        rtbCommunication.AppendText(Responses[i]);
+                        ns.Close();
+                        tcpClient.Close();
+                        rtbCommunication.AppendText("The terminal will close in 3 second.\n");
+                        Task.Delay(3000).Wait();
+                        this.Close();
+                        this.dasboard.Visible = true;
+                    }
+                    else
+                    {
+                        rtbCommunication.SelectionColor = Color.Green;
+                        rtbCommunication.AppendText(Responses[i]);
+                    }
+                }
             }
         }
 
@@ -115,7 +127,8 @@ namespace Client
 
         private string SendMess(string mess)
         {
-            byte[] data = Encoding.UTF8.GetBytes(mess);
+            var smess = EncryptAES(mess, pk, initVec) + '\n';
+            byte[] data = Encoding.UTF8.GetBytes(smess);
             ns.Write(data, 0, data.Length);
             ns.Flush();
             return mess;
@@ -147,7 +160,7 @@ namespace Client
                 rtbCommunication.AppendText(request);
                 //rtbCommunication.Text += request;
 
-                if(tbRequest.Text.Contains("login"))
+                if (tbRequest.Text.Contains("login"))
                 {
                     string[] words = tbRequest.Text.Split(' ');
                     if (words.Length == 3)
@@ -211,6 +224,55 @@ namespace Client
         private void btnMinimize_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
+        }
+
+        string DecryptAES(string ciphertext, string key, string iv)
+        {
+            byte[] buffer = Convert.FromBase64String(ciphertext);
+
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Convert.FromBase64String(key);
+                aes.IV = Convert.FromBase64String(iv);
+                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+                using (MemoryStream memoryStream = new MemoryStream(buffer))
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader streamReader = new StreamReader((Stream)cryptoStream))
+                        {
+                            return streamReader.ReadToEnd();
+                        }
+                    }
+                }
+            }
+        }
+
+
+        string EncryptAES(string plaintext, string key, string iv)
+        {
+            byte[] array;
+
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Convert.FromBase64String(key);
+                aes.IV = Convert.FromBase64String(iv);
+                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
+                        {
+                            streamWriter.Write(plaintext);
+                        }
+                        array = memoryStream.ToArray();
+                    }
+                }
+            }
+            return Convert.ToBase64String(array);
         }
     }
 }
