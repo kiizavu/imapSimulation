@@ -11,7 +11,6 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.Security.Cryptography;
-using System.IO;
 
 namespace Client
 {
@@ -23,9 +22,6 @@ namespace Client
 
         public static string user;
         string serverResponse = null;
-
-        string initVec = "4JoZD9aVHWnVmlXe5INNow==";
-        string pk = "prrtiNdMz2fG1SB7KMevbDwo9qQFCmgdWGitgdTa23Q=";
 
         public Dasboard dasboard { get; set; }
         TcpClient tcpClient = new TcpClient();
@@ -123,27 +119,18 @@ namespace Client
             }
             else
             {
-                int cut = serverResponse.IndexOf('\0');
-                serverResponse = serverResponse.Substring(0, cut);
-                string[] Responses = serverResponse.Split('\n');
-                for (int i = 0; i < Responses.Count(); i++)
+                if (serverResponse.Contains($"OK {tbUserName.Text} authenticated (Success)"))         // If user and password is correct, open client mail form
                 {
-                    if (Responses[i] != "")
-                        Responses[i] = DecryptAES(Responses[i], pk, initVec);
-
-                    if (Responses[i].Contains($"OK {tbUserName.Text} authenticated (Success)"))         // If user and password is correct, open client mail form
-                    {
-                        Checked();
-                        Main main = new Main();
-                        main.Show();
-                        main.log = this;
-                        this.Visible = false;
-                    }
-                    else if (Responses[i].Contains("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)"))      // If user and password is incorrect, show message box to infrom user
-                        MessageBox.Show("Username or password is incorrect!!!", "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    else if (Responses[i].Contains("This account are currently using by another person!!!"))             // If the account is being used by another person
-                        MessageBox.Show("This account are currently using by another person!!!", "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Checked();
+                    Main main = new Main();
+                    main.Show();
+                    main.log = this;
+                    this.Visible = false;
                 }
+                else if (serverResponse.Contains("tag NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)"))      // If user and password is incorrect, show message box to infrom user
+                    MessageBox.Show("Username or password is incorrect!!!", "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else if (serverResponse.Contains("This account are currently using by another person!!!"))             // If the account is being used by another person
+                    MessageBox.Show("This account are currently using by another person!!!", "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -172,8 +159,7 @@ namespace Client
 
         private string SendMess(string mess)
         {
-            var smess = EncryptAES(mess, pk, initVec) + '\n';
-            byte[] data = Encoding.UTF8.GetBytes(smess);
+            byte[] data = Encoding.UTF8.GetBytes(mess);
             ns.Write(data, 0, data.Length);
             ns.Flush();
             return mess;
@@ -246,55 +232,6 @@ namespace Client
                 Properties.Settings.Default.Remme = "yes";
                 Properties.Settings.Default.Save();
             }
-        }
-
-        string DecryptAES(string ciphertext, string key, string iv)
-        {
-            byte[] buffer = Convert.FromBase64String(ciphertext);
-
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = Convert.FromBase64String(key);
-                aes.IV = Convert.FromBase64String(iv);
-                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
-
-                using (MemoryStream memoryStream = new MemoryStream(buffer))
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (StreamReader streamReader = new StreamReader((Stream)cryptoStream))
-                        {
-                            return streamReader.ReadToEnd();
-                        }
-                    }
-                }
-            }
-        }
-
-
-        string EncryptAES(string plaintext, string key, string iv)
-        {
-            byte[] array;
-
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = Convert.FromBase64String(key);
-                aes.IV = Convert.FromBase64String(iv);
-                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
-                    {
-                        using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
-                        {
-                            streamWriter.Write(plaintext);
-                        }
-                        array = memoryStream.ToArray();
-                    }
-                }
-            }
-            return Convert.ToBase64String(array);
         }
     }
 }

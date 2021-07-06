@@ -11,7 +11,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Security.Cryptography;
 
 namespace Client
 {
@@ -34,9 +33,6 @@ namespace Client
         string selectedFolder;
         int numberOfMail = 0;
         public int isMailSelected = 0;
-
-        string initVec = "4JoZD9aVHWnVmlXe5INNow==";
-        string pk = "prrtiNdMz2fG1SB7KMevbDwo9qQFCmgdWGitgdTa23Q=";
 
         public Login log { get; set; }
         public Dasboard dasboard { get; set; }
@@ -319,114 +315,106 @@ namespace Client
             }
             else
             {
-                int cut = serverResponse.IndexOf('\0');
-                serverResponse = serverResponse.Substring(0, cut);
-                string[] Responses = serverResponse.Split('\n');
-                for (int i = 0; i < Responses.Count(); i++)
+                if (serverResponse.Contains("* LIST "))                                                      // List folder
                 {
-                    Responses[i] = DecryptAES(Responses[i], pk, initVec);
-
-                    if (Responses[i].Contains("* LIST "))                                                      // List folder
-                    {
-                        Responses[i] = Responses[i].Substring(7);
-                        string[] folder = Responses[i].Split(new[] { "* LIST ", "\n" }, StringSplitOptions.None);
-                        foreach (var item in folder)
-                            if (!item.Contains("(Success)") && !item.Contains("\0") && item != "" && !defaultFolders.Contains(item))
-                            {
-                                drdSeeMore.AddItem(item);
-                                FolderAdd.Add(item);
-                            }
-                    }
-                    else if (Responses[i].Contains($"{Login.user} OK {selectedFolder} selected. (Success)"))  // Select folder
-                    {
-                        //Set tilte for mail container
-                        lbTilte.Text = selectedFolder;
-
-                        //Clear the mail container
-                        pnlContainer.Controls.Clear();
-
-                        //Add the loading animation and hide the mail contain
-                        this.Invoke((MethodInvoker)delegate
+                    serverResponse = serverResponse.Substring(7);
+                    string[] folder = serverResponse.Split(new[] { "* LIST ", "\n" }, StringSplitOptions.None);
+                    foreach (var item in folder)
+                        if (!item.Contains("(Success)") && !item.Contains("\0") && item != "" && !defaultFolders.Contains(item))
                         {
-                            needToLoad();
-                        });
-
-                        numberOfMail = 0;
-                        string mess = $"{Login.user} uid search all\n";
-                        SendMess(mess);
-                    }
-                    else if (Responses[i].Contains("Unknown mailbox (Failure)"))                               // If folder is not exist
-                    {
-                        MessageBox.Show("Unknown mailbox", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else if (Responses[i].Contains("* SEARCH"))                                               // Search mail uid in folder
-                    {
-                        int index = Responses[i].IndexOf($"\n{Login.user} OK SEARCH completed. (Success)");
-                        int cutLenght = Responses[i].Substring(index).Length;
-                        int lengtOfNeed = Responses[i].Length - cutLenght - 10;
-                        if (lengtOfNeed > 0)
-                        {
-                            string uids = Responses[i].Substring(9, lengtOfNeed);
-
-                            string[] words = uids.Split(delimiterChars);
-                            string mess = $"{Login.user} uid fetch ";
-                            foreach (var item in words)
-                            {
-                                mess += item + " ";
-                            }
-
-                            mailItems = new List<MailItem>();
-
-                            SendMess(mess + "\n");
+                            drdSeeMore.AddItem(item);
+                            FolderAdd.Add(item);
                         }
-                    }
-                    else if (Responses[i].Contains("-;:{}") && isMailSelected == 0)                               // List mail to list view
-                    {
-                        string[] words = Responses[i].Split(new[] { "-;:{}" }, StringSplitOptions.None);
-                        loadMails(words);
-                    }
-                    else if (Responses[i].Contains("-;:{}") && isMailSelected == 1)                               // Select mail
-                    {
-                        string[] words = Responses[i].Split(new[] { "-;:{}" }, StringSplitOptions.None);
+                }
+                else if (serverResponse.Contains($"{Login.user} OK {selectedFolder} selected. (Success)"))  // Select folder
+                {
+                    //Set tilte for mail container
+                    lbTilte.Text = selectedFolder;
 
-                        rtbFrom.Text = words[1];
-                        lbSubject.Text = words[2];
-                        lbDate.Text = words[3];
-                        rtbBody.Text = words[4];
+                    //Clear the mail container
+                    pnlContainer.Controls.Clear();
+                    
+                    //Add the loading animation and hide the mail contain
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        needToLoad();
+                    });
 
-                        setViEnTrue(From);
-                        setViEnTrue(Date);
-                        setViEnTrue(Subject);
-                        setViEnTrue(Body);
-                        isMailSelected = 0;
-                    }
-                    else if (Responses[i].Contains("OK LOGOUT completed"))                                    // Logout
+                    numberOfMail = 0;
+                    string mess = $"{Login.user} uid search all\n";
+                    SendMess(mess);
+                }
+                else if (serverResponse.Contains("Unknown mailbox (Failure)"))                               // If folder is not exist
+                {
+                    MessageBox.Show("Unknown mailbox", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else if (serverResponse.Contains("* SEARCH"))                                               // Search mail uid in folder
+                {
+                    int index = serverResponse.IndexOf($"\n{Login.user} OK SEARCH completed. (Success)");
+                    int cutLenght = serverResponse.Substring(index).Length;
+                    int lengtOfNeed = serverResponse.Length - cutLenght - 10;
+                    if (lengtOfNeed > 0)
                     {
-                        this.log.initData();
-                        this.log.Visible = true;
-                        this.Close();
+                        string uids = serverResponse.Substring(9, lengtOfNeed);
+
+                        string[] words = uids.Split(delimiterChars);
+                        string mess = $"{Login.user} uid fetch ";
+                        foreach (var item in words)
+                        {
+                            mess += item + " ";
+                        }
+
+                        mailItems = new List<MailItem>();
+
+                        SendMess(mess + "\n");
                     }
-                    else if (Responses[i].Contains($"{Login.user} OK DELETE"))                                // Delete folder
-                    {
-                        drdSeeMore.Clear();
-                        FolderAdd.Clear();
-                        string[] tmp = Responses[i].Split(' ');
-                        string mess = $"{Login.user} list\n";
-                        SendMess(mess);
-                    }
-                    else if (Responses[i].Contains($"{Login.user} OK CREATE completed"))                                // Create folder
-                    {
-                        drdSeeMore.Clear();
-                        FolderAdd.Clear();
-                        string mess = $"{Login.user} list\n";
-                        SendMess(mess);
-                    }
-                    else if (Responses[i].Contains($"{Login.user} OK STORE completed") || Responses[i].Contains($"{Login.user} OK MOVE completed"))
-                    {
-                        pnlContainer.Controls.Clear();
-                        string mess = $"{Login.user} select \"" + selectedFolder + "\"\n";
-                        SendMess(mess);
-                    }
+                }
+                else if (serverResponse.Contains("-;:{}") && isMailSelected == 0)                               // List mail to list view
+                {
+                    string[] words = serverResponse.Split(new[] { "-;:{}" }, StringSplitOptions.None);
+                    loadMails(words);
+                }
+                else if (serverResponse.Contains("-;:{}") && isMailSelected == 1)                               // Select mail
+                {
+                    string[] words = serverResponse.Split(new[] { "-;:{}" }, StringSplitOptions.None);
+
+                    rtbFrom.Text = words[1];
+                    lbSubject.Text = words[2];
+                    lbDate.Text = words[3];
+                    rtbBody.Text = words[4];
+
+                    setViEnTrue(From);
+                    setViEnTrue(Date);
+                    setViEnTrue(Subject);
+                    setViEnTrue(Body);
+                    isMailSelected = 0;
+                }
+                else if (serverResponse.Contains("OK LOGOUT completed"))                                    // Logout
+                {
+                    this.log.initData();
+                    this.log.Visible = true;
+                    this.Close();
+                }
+                else if (serverResponse.Contains($"{Login.user} OK DELETE"))                                // Delete folder
+                {
+                    drdSeeMore.Clear();
+                    FolderAdd.Clear();
+                    string[] tmp = serverResponse.Split(' ');
+                    string mess = $"{Login.user} list\n";
+                    SendMess(mess);
+                }
+                else if (serverResponse.Contains($"{Login.user} OK CREATE completed"))                                // Create folder
+                {
+                    drdSeeMore.Clear();
+                    FolderAdd.Clear();
+                    string mess = $"{Login.user} list\n";
+                    SendMess(mess);
+                }
+                else if (serverResponse.Contains($"{Login.user} OK STORE completed") || serverResponse.Contains($"{Login.user} OK MOVE completed"))
+                {
+                    pnlContainer.Controls.Clear();
+                    string mess = $"{Login.user} select \"" + selectedFolder + "\"\n";
+                    SendMess(mess);
                 }
             }
         }
@@ -456,8 +444,7 @@ namespace Client
 
         public string SendMess(string mess)
         {
-            var smess = EncryptAES(mess, pk, initVec) + '\n';
-            byte[] data = Encoding.UTF8.GetBytes(smess);
+            byte[] data = Encoding.UTF8.GetBytes(mess);
             ns.Write(data, 0, data.Length);
             ns.Flush();
             return mess;
@@ -519,55 +506,6 @@ namespace Client
             pnlContainer.Controls.Clear();
             textBox1.Clear();
             numberOfMail = 0;
-        }
-
-        string DecryptAES(string ciphertext, string key, string iv)
-        {
-            byte[] buffer = Convert.FromBase64String(ciphertext);
-
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = Convert.FromBase64String(key);
-                aes.IV = Convert.FromBase64String(iv);
-                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
-
-                using (MemoryStream memoryStream = new MemoryStream(buffer))
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (StreamReader streamReader = new StreamReader((Stream)cryptoStream))
-                        {
-                            return streamReader.ReadToEnd();
-                        }
-                    }
-                }
-            }
-        }
-
-
-        string EncryptAES(string plaintext, string key, string iv)
-        {
-            byte[] array;
-
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = Convert.FromBase64String(key);
-                aes.IV = Convert.FromBase64String(iv);
-                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
-                    {
-                        using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
-                        {
-                            streamWriter.Write(plaintext);
-                        }
-                        array = memoryStream.ToArray();
-                    }
-                }
-            }
-            return Convert.ToBase64String(array);
         }
     }
 }

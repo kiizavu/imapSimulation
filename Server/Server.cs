@@ -11,7 +11,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
-using System.Security.Cryptography;
 
 namespace Server
 {
@@ -24,9 +23,6 @@ namespace Server
         static string rootPath = Path.GetDirectoryName(Application.ExecutablePath);
         static string accountDBPath = rootPath + @"/db.csv";
         char[] delimiterChars = { ' ', '-', '\n' };
-
-        string initVec = "4JoZD9aVHWnVmlXe5INNow==";
-        string pk = "prrtiNdMz2fG1SB7KMevbDwo9qQFCmgdWGitgdTa23Q=";
 
         public Dasboard dasboard { get; set; }
         Socket listenerSocket;
@@ -90,7 +86,7 @@ namespace Server
             foreach (Socket item in clientSocketList)
             {
                 if (item != null && item == client)
-                    item.Send(Encoding.UTF8.GetBytes(EncryptAES(s, pk, initVec) + "\n"));
+                    item.Send(Encoding.UTF8.GetBytes(s));
             }
 
             rtbCommunication.SelectionColor = Color.DeepSkyBlue;
@@ -459,8 +455,6 @@ namespace Server
                         text += Encoding.UTF8.GetString(recv);
                     } while (text[text.Length - 1] != '\n');
 
-                    text = DecryptAES(text, pk, initVec);
-
                     rtbCommunication.SelectionColor = Color.Red;
                     rtbCommunication.AppendText(endPoint + ": " + text);
 
@@ -553,55 +547,6 @@ namespace Server
         private void btnMinimize_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
-        }
-
-        string DecryptAES(string ciphertext, string key, string iv)
-        {
-            byte[] buffer = Convert.FromBase64String(ciphertext);
-
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = Convert.FromBase64String(key);
-                aes.IV = Convert.FromBase64String(iv);
-                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
-
-                using (MemoryStream memoryStream = new MemoryStream(buffer))
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (StreamReader streamReader = new StreamReader((Stream)cryptoStream))
-                        {
-                            return streamReader.ReadToEnd();
-                        }
-                    }
-                }
-            }
-        }
-
-
-        string EncryptAES(string plaintext, string key, string iv)
-        {
-            byte[] array;
-
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = Convert.FromBase64String(key);
-                aes.IV = Convert.FromBase64String(iv);
-                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
-                    {
-                        using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
-                        {
-                            streamWriter.Write(plaintext);
-                        }
-                        array = memoryStream.ToArray();
-                    }
-                }
-            }
-            return Convert.ToBase64String(array);
         }
     }
 }
