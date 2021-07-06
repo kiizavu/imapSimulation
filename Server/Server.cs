@@ -436,7 +436,7 @@ namespace Server
             foreach (var item in uids)
                 senddata += item + " ";
 
-            senddata += $"\n{words[0]} OK SEARCH completed. (Success)";
+            senddata += $"\n{words[0]} OK SEARCH completed. (Success)\n";
             sendMess(senddata, client);
         }
 
