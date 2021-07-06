@@ -43,6 +43,7 @@ namespace Project
             }
             else
             {
+                Restart();
                 if (serverResponse.Contains("* LIST "))                                                      // List folder
                 {
                     serverResponse = serverResponse.Substring(7);
@@ -211,6 +212,120 @@ namespace Project
             }
         }
 
+        private void CreateBtn_Click(object sender, EventArgs e)
+        {
+            string command = $"{Login.user} create " + textBox2.Text + "\n";
+            listView1.Items.Add(textBox2.Text);
+            SendMess(command);
+        }
+
+        private void DeleteBtn_Click(object sender, EventArgs e)
+        {
+            string selected = listView2.SelectedItems[0].Text;
+            string command = $"{Login.user} store " + selected + @" +flags (\Delete)" + "\n";
+            SendMess(command);
+        }
+
+        private void DelFolBtn_Click(object sender, EventArgs e)
+        {
+            string command = $"{Login.user} delete " + selectedFolder + "\n";
+            SendMess(command);
+        }
+
+        //right click để thao tác
+        private void Mouse_Click(object sender, MouseEventArgs e)
+        {
+            bool match = false;
+            if (e.Button == MouseButtons.Right)
+            {
+                foreach (ListViewItem item in listView2.Items)
+                {
+                    if (item.Bounds.Contains(new Point(e.X, e.Y)))
+                    {
+                        listView2.ContextMenuStrip = contextMenuStrip1;
+                        match = true;
+                        break;
+                    }
+                }
+                if (match)
+                {
+                    listView2.ContextMenuStrip.Show(listView2, new Point(e.X, e.Y));
+                }
+            }    
+        }
+
+        //Làm sạch giao diện
+        void Restart()
+        {
+            richTextBox1.Text = "";
+            CreateBtn.Visible = false;
+            label1.Visible = false;
+            textBox2.Visible = false;
+        }
+
+        //Nút delete
+        private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            DeleteBtn_Click(sender, e);
+        }
+
+        //Xóa thư mục hiện tại
+        private void deleteCurrentFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Restart();
+            DelFolBtn_Click(sender, e);
+        }
+
+        //Tạo folder mới
+        private void createFolderToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            Restart();
+            CreateBtn.Visible = true;
+            label1.Text = "Nhập tên thư mục bạn muốn tạo";
+            label1.Visible = true;
+            textBox2.Visible = true;
+        }
+
+        //Event copy mail
+        void copy(object sender, ToolStripItemClickedEventArgs e)
+        {
+            string msg = String.Format(e.ClickedItem.Text);
+            string selected = listView2.SelectedItems[0].Text;
+            string command = $"{Login.user} copy " + selected + " " + msg + "\n";
+            SendMess(command);
+        }
+
+        //Hiện danh sách thư mục để copy mail khi rê chuột tới
+        private void copyToolStripMenuItem1_MouseHover(object sender, EventArgs e)
+        {
+            (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems.Clear();
+
+            for (var i = 0; i < listView1.Items.Count; i++)
+            {
+                (contextMenuStrip1.Items[0] as ToolStripMenuItem).DropDownItems.Add(listView1.Items[i].Text);
+            }
+        }
+
+        //Event move mail
+        void move(object sender, ToolStripItemClickedEventArgs e)
+        {
+            string msg = String.Format(e.ClickedItem.Text);
+            string selected = listView2.SelectedItems[0].Text;
+            string command = $"{Login.user} move " + selected + " " + msg + "\n";
+            SendMess(command);
+        }
+
+        //Hiện danh sách thư mục để move mail khi rê chuột tới
+        private void chuyểnToolStripMenuItem_MouseHover(object sender, EventArgs e)
+        {
+            (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems.Clear();
+
+            for (var i = 0; i < listView1.Items.Count; i++)
+            {
+                (contextMenuStrip1.Items[2] as ToolStripMenuItem).DropDownItems.Add(listView1.Items[i].Text);
+            }
+        }
+
         private void btnLogOut_Click(object sender, EventArgs e)
         {
             var result = MessageBox.Show("Are you sure ?", "Log out", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -220,6 +335,20 @@ namespace Project
                 string mess = $"{Login.user} logout\n";
                 SendMess(mess);
             }
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            string mess = $"{Login.user} search " + tbSearch.Text + '\n';
+            SendMess(mess);
+            listView2.Items.Clear();
+            numberOfMail = 0;
+        }
+
+        private void ClientMail_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            string mess = $"{Login.user} logout\n";
+            SendMess(mess);
         }
 
         private void btnSearch_Click(object sender, EventArgs e)

@@ -265,7 +265,169 @@ namespace Project
             return;
         }
 
-        // Nhan message tu client
+        private void CreateFolder(string mess, Socket client)
+        {
+            try
+            {
+                string[] words = mess.Split(delimiterChars);
+                string inboxPath = clientsList[words[0]].inboxPath;
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+                List<string> folders = clientsList[words[0]].folders;
+
+                mess = words[2];
+                folders.Add(mess);
+                Directory.CreateDirectory(inboxPath + mess);
+                sendMess($"{words[0]} OK CREATE completed\n", client);
+
+                UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
+            }
+            catch { }
+            return; 
+        }
+
+        //Copy mail
+        private void Copy_Mail(string uid, string mailBox, string curFolder, string inboxPath)
+        {
+            string sourcePath = inboxPath + curFolder;
+            string targetPath = inboxPath + mailBox;
+            DirectoryInfo d = new DirectoryInfo(sourcePath);
+            DirectoryInfo[] dir = d.GetDirectories();
+            FileInfo[] fi = d.GetFiles();
+            for (int i = 0; i < fi.Length; ++i)
+            {
+                if (fi[i].Name.Contains(uid))
+                {
+                    string sourceFile = Path.Combine(sourcePath, fi[i].Name);
+                    string destFile = Path.Combine(targetPath, fi[i].Name);
+                    File.Copy(sourceFile, destFile, true);
+                    break;
+                }
+            }
+        }
+
+        private void CopyMail(string mess, Socket client)
+        {
+            try
+            {
+                string[] words = mess.Split(delimiterChars);
+                string inboxPath = clientsList[words[0]].inboxPath;
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+
+                string curFolder = new DirectoryInfo(selectFolderPath).Name;
+                Copy_Mail(words[2], words[3], curFolder, inboxPath);
+                sendMess($"{words[0]} OK COPY completed\n", client);
+            }
+            catch { }
+            return;
+        }
+
+        //Delete mail
+        private void Delete_Mail(string uid, string selectFolderPath)
+        {
+            DirectoryInfo d = new DirectoryInfo(selectFolderPath);
+            DirectoryInfo[] dir = d.GetDirectories();
+            FileInfo[] fi = d.GetFiles();
+            for (int i = 0; i < fi.Length; ++i)
+            {
+                if (fi[i].Name.Contains(uid))
+                {
+                    File.Delete(fi[i].FullName);
+                    break;
+                }
+            }
+        }
+
+        private void DeleteMail(string mess, Socket client)
+        {
+            try
+            {
+                string[] words = mess.Split(delimiterChars);
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+
+                Delete_Mail(words[2], selectFolderPath);
+                sendMess($"{words[0]} OK STORE completed\n", client);
+            }
+            catch { }
+            return;
+        }
+
+        private void DeleteFol(string mess, Socket client)
+        {
+            try
+            {
+                string[] words = mess.Split(delimiterChars);
+                string inboxPath = clientsList[words[0]].inboxPath;
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+                List<string> folders = clientsList[words[0]].folders;
+
+                Directory.Delete(selectFolderPath, true);
+                sendMess($"{words[0]} OK DELETE Completed\n", client);
+
+                UpdateValueForClient(ref clientsList, words[0], inboxPath, selectFolderPath, folders);
+            }
+            catch { }
+            return;
+        }
+
+        private void Relocate_Mail(string uid, string mailBox, string curFolder, string inboxPath)
+        {
+            Copy_Mail(uid, mailBox, curFolder, inboxPath);
+            string path = inboxPath + curFolder;
+            Delete_Mail(uid, path);
+        }
+
+        private void RelocateMail(string mess, Socket client)
+        {
+            try
+            {
+                string[] words = mess.Split(delimiterChars);
+                string inboxPath = clientsList[words[0]].inboxPath;
+                string selectFolderPath = clientsList[words[0]].selectFolderPath;
+
+                string curFolder = new DirectoryInfo(selectFolderPath).Name;
+                Relocate_Mail(words[2], words[3], curFolder, inboxPath);
+                sendMess($"{words[0]} OK MOVE completed\n", client);
+            }
+            catch { }
+            return;
+        }
+
+        private List<string> GetFromSearch(string search, string selectFolderPath)
+        {
+            List<string> uids = new List<string>();
+
+            DirectoryInfo d = new DirectoryInfo(selectFolderPath);
+            FileInfo[] subdi = d.GetFiles();
+
+            foreach (var item in subdi)
+            {
+                string from = File.ReadLines(item.FullName).Skip(1).Take(1).First();
+                if (from == search)
+                    uids.Add(item.Name);
+            }
+            return uids;
+        }
+
+        private void SearchFrom(string mess, Socket client)
+        {
+            List<string> uids = new List<string>();
+
+            string[] words = mess.Split(delimiterChars);
+            string selectFolderPath = clientsList[words[0]].selectFolderPath;
+            
+            string search = words[words.Length - 2];
+
+            uids = GetFromSearch(search, selectFolderPath);
+
+            string senddata = "* SEARCH ";
+
+            foreach (var item in uids)
+                senddata += item + " ";
+
+            senddata += $"\n{words[0]} OK SEARCH completed. (Success)";
+            sendMess(senddata, client);
+        }
+
         void getMess(object obj)
         {
             Socket client = obj as Socket;
